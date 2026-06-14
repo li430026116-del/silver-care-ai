@@ -1,0 +1,201 @@
+{
+  "generated_at": "2026-03-30 12:55:51",
+  "data_dir": "E:\\python\\NuanYa\\NuanYa\\data",
+  "out_dir": "E:\\python\\NuanYa\\NuanYa\\data\\eval_outputs",
+  "semantic": {
+    "verify": {
+      "accuracy": 0.846,
+      "total": 500,
+      "by_topic": {
+        "哄睡": {
+          "accuracy": 1.0,
+          "total": 79
+        },
+        "安全防护": {
+          "accuracy": 0.931,
+          "total": 87
+        },
+        "病护应对": {
+          "accuracy": 0.4762,
+          "total": 105
+        },
+        "知识启蒙": {
+          "accuracy": 0.8065,
+          "total": 31
+        },
+        "行为培养": {
+          "accuracy": 0.8,
+          "total": 50
+        },
+        "饮食健康": {
+          "accuracy": 1.0,
+          "total": 148
+        }
+      }
+    },
+    "test": {
+      "accuracy": 0.92,
+      "total": 500,
+      "by_topic": {
+        "哄睡": {
+          "accuracy": 1.0,
+          "total": 75
+        },
+        "安全防护": {
+          "accuracy": 0.916,
+          "total": 131
+        },
+        "病护应对": {
+          "accuracy": 1.0,
+          "total": 136
+        },
+        "知识启蒙": {
+          "accuracy": 0.7097,
+          "total": 31
+        },
+        "行为培养": {
+          "accuracy": 0.6957,
+          "total": 23
+        },
+        "饮食健康": {
+          "accuracy": 0.875,
+          "total": 104
+        }
+      }
+    }
+  },
+  "credibility": {
+    "verify": {
+      "accuracy": 0.92,
+      "total": 500,
+      "labels": [
+        "科学经验",
+        "待验证经验",
+        "风险经验"
+      ],
+      "confusion_matrix": [
+        [
+          458,
+          8,
+          22
+        ],
+        [
+          6,
+          2,
+          3
+        ],
+        [
+          1,
+          0,
+          0
+        ]
+      ]
+    },
+    "test": {
+      "accuracy": 0.952,
+      "total": 500,
+      "labels": [
+        "科学经验",
+        "待验证经验",
+        "风险经验"
+      ],
+      "confusion_matrix": [
+        [
+          476,
+          24,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ]
+    }
+  },
+  "value": {
+    "verify": {
+      "total": 500,
+      "mae": 2.421,
+      "pearson": 0.2165
+    },
+    "test": {
+      "total": 500,
+      "mae": 2.7724,
+      "pearson": -0.0052
+    }
+  },
+  "matching_parent": {
+    "verify": {
+      "total": 500,
+      "top1_accuracy": 0.644,
+      "topk_accuracy": 0.706,
+      "avg_similarity_top1": 0.052084,
+      "topk": 5
+    },
+    "test": {
+      "total": 500,
+      "top1_accuracy": 0.634,
+      "topk_accuracy": 0.72,
+      "avg_similarity_top1": 0.058164,
+      "topk": 5
+    }
+  },
+  "matching_elder": {
+    "verify": {
+      "total": 800,
+      "help_type_accuracy": 0.1087
+    },
+    "test": {
+      "total": 200,
+      "help_type_accuracy": 0.08
+    }
+  },
+  "demand_model_demo": {
+    "解析结果": {
+      "需求类型": "育儿",
+      "紧急程度": "中",
+      "帮助类型": "指导"
+    },
+    "需求标签": "睡眠安抚",
+    "推荐老人": [
+      {
+        "老人姓名": "王奶奶",
+        "擅长领域": [
+          "睡眠安抚",
+          "哄睡",
+          "作息调整"
+        ],
+        "匹配度": 0.7866
+      },
+      {
+        "老人姓名": "李爷爷",
+        "擅长领域": [
+          "疾病护理",
+          "发热处理",
+          "就医判断"
+        ],
+        "匹配度": 0.0
+      },
+      {
+        "老人姓名": "张奶奶",
+        "擅长领域": [
+          "喂养护理",
+          "辅食添加",
+          "营养搭配"
+        ],
+        "匹配度": 0.0
+      }
+    ]
+  },
+  "demo_outputs": {
+    "cred_value_demo_csv": "E:\\python\\NuanYa\\NuanYa\\data\\eval_outputs\\cred_value_demo.csv",
+    "cred_value_demo_svg": "E:\\python\\NuanYa\\NuanYa\\data\\eval_outputs\\cred_value_demo.svg",
+    "elder_helper_demo_csv": "E:\\python\\NuanYa\\NuanYa\\data\\eval_outputs\\elder_helper_demo.csv"
+  }
+}

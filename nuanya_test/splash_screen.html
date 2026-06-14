@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>暖芽 - AI代际互助平台</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f7f8fa;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* 确保在不同屏幕尺寸下，剪裁区域显示为透明 */
+        html, body {
+            background-color: #f7f8fa;
+        }
+
+        /* 针对移动设备的安全区域适配 */
+        @supports (padding: max(0px)) {
+            body {
+                padding-left: max(0px, env(safe-area-inset-left));
+                padding-right: max(0px, env(safe-area-inset-right));
+                padding-top: max(0px, env(safe-area-inset-top));
+                padding-bottom: max(0px, env(safe-area-inset-bottom));
+            }
+        }
+        
+        .app-shell { 
+            max-width: 480px; 
+            margin: 0 auto; 
+            height: 100vh; 
+            position: relative; 
+            overflow: hidden; 
+            background: linear-gradient(135deg, #FF8C42 0%, #FF6B35 100%);
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+        }
+
+        .splash-container {
+            text-align: center;
+            color: white;
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            padding: 20px;
+        }
+
+        .logo-container {
+            margin-bottom: 40px;
+            animation: logoFadeIn 1.5s ease-out;
+        }
+
+        .logo {
+            width: 120px;
+            height: 120px;
+            background: white;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            animation: logoFloat 2s ease-in-out infinite alternate;
+            overflow: hidden;
+        }
+
+        .logo-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 30px;
+        }
+
+        .app-name {
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            animation: textSlideUp 1s ease-out 0.5s both;
+        }
+
+        .app-slogan {
+            font-size: 16px;
+            opacity: 0.9;
+            margin-bottom: 60px;
+            animation: textSlideUp 1s ease-out 0.8s both;
+        }
+
+        .loading-container {
+            animation: loadingFadeIn 1s ease-out 1.2s both;
+        }
+
+        .loading-dots {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            background: white;
+            border-radius: 50%;
+            animation: dotPulse 1.4s ease-in-out infinite;
+        }
+
+        .dot:nth-child(1) { animation-delay: 0s; }
+        .dot:nth-child(2) { animation-delay: 0.2s; }
+        .dot:nth-child(3) { animation-delay: 0.4s; }
+
+        .loading-text {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .version-info {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            opacity: 0.6;
+            animation: versionFadeIn 1s ease-out 2s both;
+        }
+
+        /* 动画定义 */
+        @keyframes logoFadeIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.5) translateY(-50px);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        @keyframes logoFloat {
+            0% {
+                transform: translateY(0px);
+            }
+            100% {
+                transform: translateY(-10px);
+            }
+        }
+
+        @keyframes textSlideUp {
+            0% {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes loadingFadeIn {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
+        @keyframes dotPulse {
+            0%, 80%, 100% {
+                transform: scale(0.8);
+                opacity: 0.5;
+            }
+            40% {
+                transform: scale(1.2);
+                opacity: 1;
+            }
+        }
+
+        @keyframes versionFadeIn {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 0.6;
+            }
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 480px) {
+            .logo {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .logo-text {
+                font-size: 40px;
+            }
+            
+            .app-name {
+                font-size: 28px;
+            }
+            
+            .app-slogan {
+                font-size: 14px;
+            }
+        }
+
+        /* 渐变背景动画（限制在竖屏容器内，避免全屏橙色闪屏） */
+        .app-shell::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, 
+                rgba(255, 255, 255, 0.1) 0%, 
+                transparent 50%, 
+                rgba(255, 255, 255, 0.1) 100%);
+            animation: shimmer 3s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes shimmer {
+            0%, 100% {
+                transform: translateX(-100%);
+            }
+            50% {
+                transform: translateX(100%);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-shell">
+        <div class="splash-container">
+            <div class="logo-container">
+                <div class="logo">
+                    <img src="images/logo.png" alt="暖芽Logo" class="logo-img">
+                </div>
+                <h1 class="app-name">暖芽</h1>
+                <p class="app-slogan">智慧传承，温暖新生</p>
+            </div>
+            
+            <div class="loading-container">
+                <div class="loading-dots">
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                </div>
+                <p class="loading-text" id="loadingText">正在加载资源...</p>
+            </div>
+            
+            <div class="version-info">
+                版本 1.0.0
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        // 开屏页面自动跳转逻辑
+        setTimeout(function() {
+            // 添加淡出效果
+            const shell = document.querySelector('.app-shell');
+            if (shell) {
+                shell.style.transition = 'opacity 0.5s ease-out';
+                shell.style.opacity = '0';
+            }
+            
+            // 跳转到用户类型选择页面
+            setTimeout(function() {
+                window.location.href = 'index.html';
+            }, 500);
+        }, 3000); // 3秒后跳转
+
+        // 点击屏幕快速跳转
+        document.addEventListener('click', function() {
+            const shell = document.querySelector('.app-shell');
+            if (shell) {
+                shell.style.transition = 'opacity 0.3s ease-out';
+                shell.style.opacity = '0';
+            }
+            setTimeout(function() {
+                window.location.href = 'index.html';
+            }, 300);
+        });
+
+        // 防止页面刷新时的闪烁
+        window.addEventListener('beforeunload', function() {
+            const shell = document.querySelector('.app-shell');
+            if (shell) shell.style.opacity = '0';
+        });
+    </script>
+</body>
+</html>

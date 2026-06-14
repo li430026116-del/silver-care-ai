@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="d2fd8490-5bcc-4864-935d-b962e95f33a2" name="更改" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectId" id="343fMMY1744uDkuvTAh3opBG7OE" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;last_opened_file_path&quot;: &quot;E:/python/djolder&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  },
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;oracle&quot;,
+      &quot;mysql&quot;
+    ]
+  }
+}</component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="应用程序级" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="默认任务">
+      <changelist id="d2fd8490-5bcc-4864-935d-b962e95f33a2" name="更改" comment="" />
+      <created>1760447127391</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1760447127391</updated>
+      <workItem from="1760447131960" duration="2970000" />
+      <workItem from="1760536415906" duration="1217000" />
+      <workItem from="1760716587273" duration="1525000" />
+      <workItem from="1760720536742" duration="4721000" />
+      <workItem from="1760776420107" duration="2650000" />
+      <workItem from="1760839220944" duration="18000" />
+      <workItem from="1760839241405" duration="950000" />
+      <workItem from="1774075877746" duration="1718000" />
+      <workItem from="1774156694914" duration="17000" />
+      <workItem from="1774157072474" duration="6306000" />
+      <workItem from="1774270989093" duration="405000" />
+      <workItem from="1774271398619" duration="2080000" />
+      <workItem from="1774312978873" duration="2561000" />
+      <workItem from="1774357478451" duration="1893000" />
+      <workItem from="1774364184528" duration="3339000" />
+      <workItem from="1774403574070" duration="5181000" />
+      <workItem from="1774428791445" duration="4747000" />
+      <workItem from="1774515941966" duration="5472000" />
+      <workItem from="1774571697433" duration="3245000" />
+      <workItem from="1774584271281" duration="1100000" />
+      <workItem from="1774626488643" duration="1346000" />
+      <workItem from="1774677448650" duration="2737000" />
+      <workItem from="1774702307257" duration="1811000" />
+      <workItem from="1774845754351" duration="1496000" />
+      <workItem from="1774860867041" duration="621000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/NuanYa$experience_credibility_model.coverage" NAME="experience_credibility_model 覆盖结果" MODIFIED="1774313675205" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/algorithm" />
+    <SUITE FILE_PATH="coverage/NuanYa$semantic_parser.coverage" NAME="semantic_parser 覆盖结果" MODIFIED="1774846476994" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/algorithm" />
+    <SUITE FILE_PATH="coverage/NuanYa$temp.coverage" NAME="temp 覆盖结果" MODIFIED="1774846497544" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/algorithm" />
+    <SUITE FILE_PATH="coverage/NuanYa$manage.coverage" NAME="manage 覆盖结果" MODIFIED="1774272989931" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/nuanya" />
+    <SUITE FILE_PATH="coverage/nuanya$settings.coverage" NAME="settings 覆盖结果" MODIFIED="1760447554935" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/nuanya/nuanya" />
+    <SUITE FILE_PATH="coverage/NuanYa$demand_understanding_model.coverage" NAME="demand_understanding_model 覆盖结果" MODIFIED="1774313077492" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/algorithm" />
+    <SUITE FILE_PATH="coverage/NuanYa$experience_value_model.coverage" NAME="experience_value_model 覆盖结果" MODIFIED="1774314123702" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/algorithm" />
+  </component>
+</project>

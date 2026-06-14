@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>暖芽</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<div class="app-shell">
+
+    <!-- Page 1: 启动页面 -->
+    <div class="page active" id="page-splash">
+        <div class="splash-container">
+            <div class="logo"><img src="images/logo.png" alt="暖芽Logo" class="logo-img"></div>
+            <h1 class="app-name">暖芽</h1>
+            <p class="app-tagline">智慧传承，温暖新生</p>
+        </div>
+    </div>
+
+    <!-- Page 2: 登录页面 -->
+    <div class="page" id="page-login">
+        <div class="login-container">
+            <div class="logo"><img src="images/logo.png" alt="暖芽Logo" class="logo-img"></div>
+            <h2 class="welcome-text">欢迎来到暖芽</h2>
+            <p class="welcome-subtext">分享您的智慧，温暖每一个新生家庭</p>
+            <div class="login-form">
+                <input type="tel" id="phoneInput" class="phone-input" placeholder="请输入您的手机号码" maxlength="11">
+                <button class="login-btn" id="loginBtn" disabled>登 录</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page 3: 新用户引导页 -->
+    <div class="page" id="page-onboarding">
+        <div class="onboarding-slider" id="onboardingSlider">
+            <div class="slide">
+                <img src="images/onboarding1.png" alt="语音分享" class="slide-image">
+                <h2 class="slide-title">张张嘴，就能分享</h2>
+                <p class="slide-description">我们有最简单的语音录入功能，<br>让您的宝贵经验轻松传递。</p>
+            </div>
+            <div class="slide">
+                <img src="images/onboarding2.png" alt="价值传递" class="slide-image">
+                <h2 class="slide-title">您的经验，是新生的光</h2>
+                <p class="slide-description">每一句朴实的话语，<br>都能帮助一个新手家庭走出焦虑。</p>
+            </div>
+             <div class="slide">
+                <img src="images/onboarding3.png" alt="获得荣誉" class="slide-image">
+                <h2 class="slide-title">收获感谢，点亮成就</h2>
+                <p class="slide-description">在这里，您的每一次分享，<br>都会被看见、被感谢、被珍藏。</p>
+            </div>
+        </div>
+        <div class="onboarding-controls">
+            <div class="dots-container" id="dotsContainer"></div>
+            <button class="onboarding-btn" id="onboardingBtn">下一页</button>
+        </div>
+    </div>
+
+    <!-- Page 3a: 擅长领域选择页 -->
+    <div class="page" id="page-expertise">
+        <div class="expertise-container">
+            <div class="expertise-header">
+                <h2 class="expertise-title">选择您的擅长领域</h2>
+                <p class="expertise-description">告诉我们您在哪些方面有丰富经验，<br>我们会为您推荐相关的问题</p>
+            </div>
+            <div class="expertise-options">
+                <div class="expertise-option" data-tag="饮食健康">
+                    <div class="option-icon">🍎</div>
+                    <div class="option-text">饮食健康</div>
+                </div>
+                <div class="expertise-option" data-tag="睡眠问题">
+                    <div class="option-icon">😴</div>
+                    <div class="option-text">睡眠问题</div>
+                </div>
+                <div class="expertise-option" data-tag="行为培养">
+                    <div class="option-icon">🎯</div>
+                    <div class="option-text">行为培养</div>
+                </div>
+                <div class="expertise-option" data-tag="病护应对">
+                    <div class="option-icon">🏥</div>
+                    <div class="option-text">病护应对</div>
+                </div>
+                <div class="expertise-option" data-tag="知识启蒙">
+                    <div class="option-icon">📚</div>
+                    <div class="option-text">知识启蒙</div>
+                </div>
+                <div class="expertise-option" data-tag="趣味陪伴">
+                    <div class="option-icon">🎈</div>
+                    <div class="option-text">趣味陪伴</div>
+                </div>
+            </div>
+            <div class="expertise-controls">
+                <button class="expertise-btn" id="expertiseBtn" disabled>选择并开始回答</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page 4: 问答广场页 -->
+    <div class="page" id="page-home">
+        <div class="page-content">
+            <header class="header"><span class="logo-text">暖芽</span></header>
+            <div class="segment-control qa-segment">
+                <button class="segment-btn active" id="qa-btn-answer" onclick="setQaMode('answer')">我要解答</button>
+                <button class="segment-btn" id="qa-btn-ask" onclick="setQaMode('ask')">我要提问</button>
+            </div>
+            <div class="qa-mode-content" id="qa-answer-content">
+                <div class="question-list" id="questionList">
+                    <!-- Questions will be dynamically inserted here -->
+                </div>
+            </div>
+            <div class="qa-mode-content" id="qa-ask-content" style="display: none;">
+                <div class="question-detail-container">
+                    <h1 class="question-title-detail">语音提问</h1>
+                    <p class="question-content-detail">按住录音按钮，说出你的问题，系统会自动转成文字。</p>
+                </div>
+                <div class="question-list" style="padding: 0 15px 10px 15px;">
+                    <div class="setting-item" style="border-bottom: none; padding: 0; background: transparent;">
+                        <select id="askCategorySelectVoice" class="phone-input custom-select" style="font-size: 24px; padding: 14px;">
+                            <option value="健康养生">健康养生</option>
+                            <option value="睡眠健康">睡眠健康</option>
+                            <option value="慢病管理">慢病管理</option>
+                            <option value="运动康复">运动康复</option>
+                            <option value="用药安全">用药安全</option>
+                            <option value="心理情绪">心理情绪</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="recording-area">
+                    <p class="recording-instructions" id="askInstructions">点击按钮，开始说出您的问题</p>
+                    <button class="record-button idle" id="askRecordBtn">
+                        <svg id="ask-mic-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
+                        <svg id="ask-stop-icon" viewBox="0 0 24 24" fill="white" style="display: none;"><rect x="6" y="6" width="12" height="12"></rect></svg>
+                    </button>
+                    <div class="recording-progress" id="askRecordingProgress" style="display: none;">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="askProgressFill"></div>
+                        </div>
+                        <div class="recording-timer" id="askRecordingTimer">00:00</div>
+                    </div>
+                    <p class="recording-status" id="askStatusText"></p>
+                </div>
+            </div>
+        </div>
+        <div class="ai-summary-wrapper" id="askSummaryWrapper">
+            <div id="askAiLoading">
+                <p>AI正在帮您整理，请稍候...</p>
+                <div class="loader"></div>
+            </div>
+            <div id="askAiResults" style="display: none;">
+                <h4 class="summary-title">识别出的文字</h4>
+                <div class="original-text" id="askOriginalText"></div>
+                <h4 class="summary-title">AI整理后的问题</h4>
+                <div class="refined-suggestions" id="askRefinedText"></div>
+                <div class="action-buttons">
+                    <button class="cancel-button" id="askCancelBtn">重新录制</button>
+                    <button class="submit-button" id="askSubmitBtn">确认并发布问题</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page 4a: 回答详情与录音页 -->
+    <div class="page" id="page-answer-detail">
+        <div class="page-content" style="padding-bottom: 0;">
+             <header class="header">
+                <div class="back-button" onclick="navigateTo('page-home')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                </div>
+                回答问题
+            </header>
+            <div class="question-detail-container">
+                <h1 class="question-title-detail" id="questionTitleDetail">...</h1>
+                <p class="question-content-detail" id="questionContentDetail">...</p>
+            </div>
+            <div class="recording-area">
+                <p class="recording-instructions" id="instructions">点击按钮，开始分享您的经验</p>
+                <button class="record-button idle" id="recordBtn">
+                    <svg id="mic-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
+                    <svg id="stop-icon" viewBox="0 0 24 24" fill="white" style="display: none;"><rect x="6" y="6" width="12" height="12"></rect></svg>
+                </button>
+                <!-- 录音进度条 -->
+                <div class="recording-progress" id="recordingProgress" style="display: none;">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <div class="recording-timer" id="recordingTimer">00:00</div>
+                </div>
+                <p class="recording-status" id="statusText"></p>
+            </div>
+        </div>
+        <div class="ai-summary-wrapper" id="summaryWrapper">
+            <div id="aiLoading">
+                <p>AI正在帮您整理，请稍候...</p>
+                <div class="loader"></div>
+                <div id="uploadProgress" class="progress" style="display:none"><div id="uploadProgressBar" class="bar"></div></div>
+                <div id="uploadProgressText" class="progress-text" style="display:none">0%</div>
+            </div>
+            <div id="aiResults" style="display: none;">
+                <h4 class="summary-title">您的原始语音文字</h4>
+                <div class="original-text"></div>
+                <h4 class="summary-title">AI精炼后的育儿建议</h4>
+                <div class="refined-suggestions"></div>
+                <div class="action-buttons">
+                    <button class="cancel-button" id="cancelBtn">取消录音</button>
+                    <button class="submit-button" id="submitBtn">确认并提交回答</button>
+                </div>
+            </div>
+        </div>
+        <div class="success-overlay" id="successOverlay">
+            <div class="success-content"><h2>提交成功！</h2><p>感谢您的无私分享！</p></div>
+        </div>
+    </div>
+
+    <!-- Page 5: 荣誉墙页 -->
+    <div class="page" id="page-honor">
+        <div class="page-content">
+            <header class="header">荣誉墙</header>
+            <div class="segment-control">
+                <button class="segment-btn active" id="btn-badges" onclick="showHonorTab('badges')">成就徽章</button>
+                <button class="segment-btn" id="btn-letters" onclick="showHonorTab('letters')">感谢信</button>
+            </div>
+            <div class="honor-content" id="honor-badges-content">
+                <div class="badge-grid">
+                    <div class="badge-item">
+                        <div class="badge-icon unlocked">
+                            <div>已获得</div>
+                        </div>
+                        <p class="badge-name unlocked">首次回答</p>
+                        <p class="badge-description">发表第一个育儿问答即可获得</p>
+                    </div>
+                    <div class="badge-item">
+                        <div class="badge-icon unlocked">
+                            <div>已获得</div>
+                        </div>
+                        <p class="badge-name unlocked">经验丰富</p>
+                        <p class="badge-description">累计回答30个问题可获得</p>
+                    </div>
+                    <div class="badge-item">
+                        <div class="badge-icon">
+                            <div>未解锁</div>
+                        </div>
+                        <p class="badge-name">分享达人</p>
+                        <p class="badge-description">连续7天提交回答可获得</p>
+                    </div>
+                </div>
+            </div>
+            <div class="honor-content" id="honor-letters-content" style="display: none;">
+                 <div class="letter-list" id="thankLettersList">
+                    <!-- 动态加载感谢信数据 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page 5a: 收藏页 -->
+    <div class="page" id="page-collections">
+        <div class="page-content">
+            <header class="header">收藏</header>
+            <div class="question-list" id="collectionsList">
+                <div class="question-card">
+                    <div class="card-header"><span class="category-tag">加载中</span></div>
+                    <p class="question-title">正在获取收藏内容...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page 6: 我的页面 -->
+    <div class="page" id="page-profile">
+        <div class="page-content" style="background-color: #f7f7f7;">
+            <div class="profile-card">
+                <img src="images/avatar.png" alt="用户头像" class="avatar">
+                <div class="user-info"><p class="name">王晓梅</p><p class="tag">育儿专家 · 2025年7月加入</p></div>
+            </div>
+            <div class="stats-section">
+                <div class="stat-item"><span class="count">32</span><p class="label">回答数</p></div>
+                <div class="stat-item"><span class="count">48</span><p class="label">获得点赞</p></div>
+                <div class="stat-item"><span class="count">35</span><p class="label">帮助家庭</p></div>
+            </div>
+            <!-- 消息提醒区域 -->
+            <div class="notifications-section" id="notificationsSection" style="margin: 15px; padding: 15px; background: white; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+                <h3 style="font-size: 28px; margin: 0 0 15px 0; color: var(--text-color);">消息提醒</h3>
+                <div id="notificationList">
+                    <!-- 消息将在此加载 -->
+                </div>
+            </div>
+            <div class="function-list">
+                <div class="list-item">
+                    <div class="item-left"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg><span>营业状态</span></div>
+                    <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+                </div>
+                <div class="list-item" onclick="navigateTo('page-my-answers')"><div class="item-left"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg><span>我的回答</span></div><span class="arrow">&gt;</span></div>
+                <div class="list-item" onclick="navigateTo('page-my-questions')"><div class="item-left"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v4"></path><path d="M12 16h.01"></path></svg><span>我的提问</span></div><span class="arrow">&gt;</span></div>
+                <div class="list-item" onclick="showSettingsModal()"><div class="item-left"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg><span>设置</span></div><span class="arrow">&gt;</span></div>
+            </div>
+            <button class="logout-btn" onclick="handleLogout()">退出登录</button>
+        </div>
+    </div>
+
+    <!-- Page 7: 我的回答页面 -->
+    <div class="page" id="page-my-answers">
+        <div class="page-content">
+            <header class="header">
+                <div class="back-button" onclick="navigateTo('page-profile')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                </div>
+                我的回答
+            </header>
+            <div class="my-answers-list" id="myAnswersList">
+                <!-- 回答列表将在这里动态加载 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Page 8: 我的提问页面 -->
+    <div class="page" id="page-my-questions">
+        <div class="page-content">
+            <header class="header">
+                <div class="back-button" onclick="navigateTo('page-profile')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                </div>
+                我的提问
+            </header>
+            <div class="question-list" id="myQuestionsList">
+                <!-- 提问列表将在这里动态加载 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 通用底部导航栏 -->
+    <nav class="bottom-nav" id="bottomNav" style="display: none;">
+        <div class="nav-item active" data-page="page-home" onclick="navigateTo('page-home')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg><span>问答广场</span>
+        </div>
+        <div class="nav-item" data-page="page-collections" onclick="navigateTo('page-collections')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg><span>收藏</span>
+        </div>
+        <div class="nav-item" data-page="page-honor" onclick="navigateTo('page-honor')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg><span>荣誉墙</span>
+        </div>
+        <div class="nav-item" data-page="page-profile" onclick="navigateTo('page-profile')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg><span>我的</span>
+        </div>
+    </nav>
+    
+    <!-- 全局弹窗：感谢信详情 -->
+    <div id="letterDetailOverlay">
+        <div class="envelope">
+            <div class="envelope-flap"></div>
+            <div class="letter-content">
+                <button class="close-letter-btn" onclick="closeLetterDetail()">×</button>
+                <img id="letterDetailPhoto" src="" alt="宝宝照片" class="letter-detail-photo">
+                <p id="letterDetailText" class="letter-detail-text"></p>
+            </div>
+        </div>
+    </div>
+
+    <div id="notificationModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="notificationModalTitle">消息提醒</h3>
+                <button class="close-btn" onclick="closeNotificationModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="notificationModalBody"></div>
+            <div class="modal-footer">
+                <button class="submit-button" onclick="closeNotificationModal()">确认</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 收藏分析详情弹窗（老人端） -->
+    <div id="analysisDetailModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="analysisDetailTitle">收藏详情</h3>
+                <button class="close-btn" onclick="closeAnalysisDetailModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="analysisDetailBody"></div>
+            <div class="modal-footer">
+                <button class="submit-button" onclick="closeAnalysisDetailModal()">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 设置弹窗 -->
+    <div id="settingsModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>设置</h3>
+                <button class="close-btn" onclick="closeSettingsModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="setting-item">
+                    <div class="setting-label">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 12l2 2 4-4"></path>
+                            <path d="M21 12c-1 0-3-1-3-3s2-3 3-3 3 1 3 3-2 3-3 3"></path>
+                            <path d="M3 12c1 0 3-1 3-3s-2-3-3-3-3 1-3 3 2 3 3 3"></path>
+                        </svg>
+                        <span>声音提醒</span>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="soundAlert">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <div class="setting-label">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                        </svg>
+                        <span>消息通知</span>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="messageNotification">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 提问弹窗 -->
+    <div id="askModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>发布问题</h3>
+                <button class="close-btn" onclick="closeAskModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="setting-item" style="border-bottom: none; padding: 0 0 12px 0;">
+                    <input id="askTitleInput" class="phone-input" style="font-size: 24px; padding: 14px;" placeholder="请输入问题标题">
+                </div>
+                <div class="setting-item" style="border-bottom: none; padding: 0 0 12px 0;">
+                    <select id="askCategorySelect" class="phone-input custom-select" style="font-size: 24px; padding: 14px;">
+                        <option value="健康养生">健康养生</option>
+                        <option value="睡眠健康">睡眠健康</option>
+                        <option value="慢病管理">慢病管理</option>
+                        <option value="运动康复">运动康复</option>
+                        <option value="用药安全">用药安全</option>
+                        <option value="心理情绪">心理情绪</option>
+                    </select>
+                </div>
+                <div class="setting-item" style="border-bottom: none; padding: 0;">
+                    <textarea id="askContentInput" class="phone-input" style="font-size: 24px; padding: 14px; height: 140px; resize: none; text-align: left;" placeholder="请补充问题详情（可选）"></textarea>
+                </div>
+                <div class="action-buttons" style="margin-top: 18px;">
+                    <button class="cancel-button" onclick="closeAskModal()">取消</button>
+                    <button class="submit-button" onclick="submitAsk()">发布</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 预先加载语音上传模块，确保全局对象可用 -->
+    <script type="module" src="./js/voiceUploader.js"></script>
+    <script src="js/experienceAnalyzer.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/voiceRecorder.js"></script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="360">
+<rect x="0" y="0" width="1100" height="360" fill="white"/>
+<text x="550.0" y="40" text-anchor="middle" font-size="20" font-family="Arial">双向匹配流程图（老人问题→帮助类型）</text>
+<rect x="90" y="150" width="260" height="90" rx="14" ry="14" fill="#f3f4f6" stroke="#111827"/>
+<text x="220.0" y="201.0" text-anchor="middle" font-size="16" font-family="Arial">老人问题</text>
+<rect x="420" y="150" width="260" height="90" rx="14" ry="14" fill="#f3f4f6" stroke="#111827"/>
+<text x="550.0" y="201.0" text-anchor="middle" font-size="16" font-family="Arial">需求解析/路由</text>
+<rect x="750" y="150" width="260" height="90" rx="14" ry="14" fill="#f3f4f6" stroke="#111827"/>
+<text x="880.0" y="201.0" text-anchor="middle" font-size="16" font-family="Arial">帮助类型</text>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="10" refY="3" orient="auto"><path d="M0,0 L10,3 L0,6 Z" fill="#111827"/></marker></defs>
+<line x1="350" y1="195" x2="420" y2="195" stroke="#111827" stroke-width="2" marker-end="url(#arrow)"/>
+<line x1="680" y1="195" x2="750" y2="195" stroke="#111827" stroke-width="2" marker-end="url(#arrow)"/>
+</svg>

@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="520">
+<rect x="0" y="0" width="1100" height="520" fill="white"/>
+<text x="550.0" y="40" text-anchor="middle" font-size="20" font-family="Arial">经验可信度 + 价值评分示例（PPT 可用）</text>
+<line x1="90" y1="440" x2="1070" y2="440" stroke="#111827" stroke-width="1"/>
+<line x1="90" y1="70" x2="90" y2="440" stroke="#111827" stroke-width="1"/>
+<line x1="84" y1="440.0" x2="90" y2="440.0" stroke="#111827" stroke-width="1"/>
+<text x="80" y="444.0" text-anchor="end" font-size="12" font-family="Arial">0.00</text>
+<line x1="90" y1="440.0" x2="1070" y2="440.0" stroke="#e5e7eb" stroke-width="1"/>
+<line x1="84" y1="366.0" x2="90" y2="366.0" stroke="#111827" stroke-width="1"/>
+<text x="80" y="370.0" text-anchor="end" font-size="12" font-family="Arial">20.00</text>
+<line x1="90" y1="366.0" x2="1070" y2="366.0" stroke="#e5e7eb" stroke-width="1"/>
+<line x1="84" y1="292.0" x2="90" y2="292.0" stroke="#111827" stroke-width="1"/>
+<text x="80" y="296.0" text-anchor="end" font-size="12" font-family="Arial">40.00</text>
+<line x1="90" y1="292.0" x2="1070" y2="292.0" stroke="#e5e7eb" stroke-width="1"/>
+<line x1="84" y1="218.0" x2="90" y2="218.0" stroke="#111827" stroke-width="1"/>
+<text x="80" y="222.0" text-anchor="end" font-size="12" font-family="Arial">60.00</text>
+<line x1="90" y1="218.0" x2="1070" y2="218.0" stroke="#e5e7eb" stroke-width="1"/>
+<line x1="84" y1="144.0" x2="90" y2="144.0" stroke="#111827" stroke-width="1"/>
+<text x="80" y="148.0" text-anchor="end" font-size="12" font-family="Arial">80.00</text>
+<line x1="90" y1="144.0" x2="1070" y2="144.0" stroke="#e5e7eb" stroke-width="1"/>
+<line x1="84" y1="70.0" x2="90" y2="70.0" stroke="#111827" stroke-width="1"/>
+<text x="80" y="74.0" text-anchor="end" font-size="12" font-family="Arial">100.00</text>
+<line x1="90" y1="70.0" x2="1070" y2="70.0" stroke="#e5e7eb" stroke-width="1"/>
+<text x="253.33333333333334" y="468" text-anchor="middle" font-size="12" font-family="Arial">科学</text>
+<rect x="235.33333333333334" y="114.39999999999998" width="35.0" height="325.6" fill="#2563eb"/>
+<text x="252.83333333333334" y="108.39999999999998" text-anchor="middle" font-size="11" font-family="Arial">88.000</text>
+<text x="580.0" y="468" text-anchor="middle" font-size="12" font-family="Arial">风险</text>
+<rect x="562.0" y="354.53" width="35.0" height="85.47000000000003" fill="#2563eb"/>
+<text x="579.5" y="348.53" text-anchor="middle" font-size="11" font-family="Arial">23.100</text>
+<text x="906.6666666666667" y="468" text-anchor="middle" font-size="12" font-family="Arial">待验证</text>
+<rect x="888.6666666666667" y="234.27999999999997" width="35.0" height="205.72000000000003" fill="#2563eb"/>
+<text x="906.1666666666667" y="228.27999999999997" text-anchor="middle" font-size="11" font-family="Arial">55.600</text>
+<rect x="100" y="40" width="14" height="14" fill="#2563eb"/>
+<text x="120" y="52" font-size="12" font-family="Arial">价值评分</text>
+</svg>

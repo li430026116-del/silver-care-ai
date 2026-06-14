@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>暖芽 - 选择身份</title>
+    <style>
+        :root { --primary-color: #FF8C42; --secondary-color: #FF6B35; --accent-color: #A9D8B8; --text-color: #585858; --border-color: #E0E0E0; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body, html { margin: 0; padding: 0; height: 100%; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-size: 16px; background-color: #f7f8fa; overflow: hidden; }
+        @supports (padding: max(0px)) { body { padding-left: max(0px, env(safe-area-inset-left)); padding-right: max(0px, env(safe-area-inset-right)); padding-top: max(0px, env(safe-area-inset-top)); padding-bottom: max(0px, env(safe-area-inset-bottom)); } }
+        .app-shell { max-width: 480px; margin: 0 auto; height: 100vh; position: relative; overflow: hidden; background: linear-gradient(135deg, #FF8C42 0%, #FF6B35 100%); box-shadow: 0 0 20px rgba(0,0,0,0.1); }
+        .selection-container { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; padding: 40px 20px; box-sizing: border-box; position: relative; }
+        .logo-section { text-align: center; margin-bottom: 50px; animation: fadeInUp 1s ease-out; }
+        .logo { width: 100px; height: 100px; background-color: white; border-radius: 25px; display: flex; justify-content: center; align-items: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2); margin: 0 auto 20px; animation: logoFloat 2s ease-in-out infinite alternate; }
+        .logo-text { width: 100%; height: 100%; object-fit: cover; border-radius: 25px; }
+        .app-name { font-size: 28px; font-weight: 600; color: white; margin-bottom: 8px; text-shadow: 2px 2px 4px rgba(0,0,0,0.2); }
+        .app-tagline { font-size: 14px; color: white; opacity: 0.9; margin-bottom: 30px; }
+        .selection-title { font-size: 18px; color: white; font-weight: 500; text-shadow: 1px 1px 2px rgba(0,0,0,0.2); }
+        .selection-buttons { width: 100%; max-width: 300px; display: flex; flex-direction: column; gap: 16px; animation: fadeInUp 1s ease-out 0.3s both; }
+        .user-type-btn { width: 100%; padding: 20px; border: none; border-radius: 20px; background-color: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); box-shadow: 0 8px 25px rgba(0,0,0,0.15); cursor: pointer; transition: all 0.3s ease; text-decoration: none; display: flex; flex-direction: column; align-items: center; gap: 12px; position: relative; overflow: hidden; }
+        .user-type-btn::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); transition: left 0.5s; }
+        .user-type-btn:hover::before { left: 100%; }
+        .user-type-btn:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(0,0,0,0.2); }
+        .user-type-btn:active { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
+        .btn-icon { width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 5px; transition: transform 0.3s ease; }
+        .user-type-btn:hover .btn-icon { transform: scale(1.1); }
+        .mom-btn .btn-icon { background: linear-gradient(135deg, #FFE4E1, #FFB6C1); color: #FF69B4; }
+        .elder-btn .btn-icon { background: linear-gradient(135deg, #E6F3FF, #B3D9FF); color: #4A90E2; }
+        .btn-title { font-size: 16px; font-weight: 600; color: var(--text-color); margin-bottom: 4px; }
+        .btn-description { font-size: 12px; color: #666; text-align: center; line-height: 1.4; }
+        @keyframes fadeInUp { 0% { opacity: 0; transform: translateY(30px); } 100% { opacity: 1; transform: translateY(0); } }
+        @keyframes logoFloat { 0% { transform: translateY(0px); } 100% { transform: translateY(-8px); } }
+        @media (max-height: 700px) {
+            .logo-section { margin-bottom: 30px; }
+            .logo { width: 80px; height: 80px; }
+            .logo-text { font-size: 28px; }
+            .app-name { font-size: 24px; }
+            .selection-title { font-size: 16px; }
+            .selection-buttons { gap: 12px; }
+            .user-type-btn { padding: 16px; }
+        }
+        @media (max-width: 360px) {
+            .selection-container { padding: 30px 15px; }
+            .selection-buttons { max-width: 280px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-shell">
+        <div class="selection-container">
+            <div class="logo-section">
+                <div class="logo"><img src="images/logo.png" alt="暖芽Logo" class="logo-text"></div>
+                <h1 class="app-name">暖芽</h1>
+                <p class="app-tagline">智能育儿助手，陪伴成长每一天</p>
+                <p class="selection-title">请选择您的身份</p>
+            </div>
+            <div class="selection-buttons">
+                <a href="mom.html" class="user-type-btn mom-btn">
+                    <div class="btn-icon">👶</div>
+                    <div class="btn-title">新手家长</div>
+                    <div class="btn-description">我是新手妈妈/爸爸<br>需要育儿经验和指导</div>
+                </a>
+                <a href="nuanya_demo.html" class="user-type-btn elder-btn">
+                    <div class="btn-icon">👴</div>
+                    <div class="btn-title">老人</div>
+                    <div class="btn-description">我有丰富的育儿经验<br>愿意分享智慧帮助他人</div>
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

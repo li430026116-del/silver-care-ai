@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="470" height="400">
+<rect x="0" y="0" width="470" height="400" fill="white"/>
+<text x="235.0" y="44" text-anchor="middle" font-size="20" font-family="Arial">可信度分类混淆矩阵（test）</text>
+<text x="325.0" y="78" text-anchor="middle" font-size="14" font-family="Arial">Pred</text>
+<text x="60" y="215.0" text-anchor="middle" font-size="14" font-family="Arial" transform="rotate(-90 60 215.0)">Truth</text>
+<text x="255.0" y="98" text-anchor="middle" font-size="12" font-family="Arial">科学经验</text>
+<text x="210" y="149.0" text-anchor="end" font-size="12" font-family="Arial">科学经验</text>
+<text x="325.0" y="98" text-anchor="middle" font-size="12" font-family="Arial">待验证经验</text>
+<text x="210" y="219.0" text-anchor="end" font-size="12" font-family="Arial">待验证经验</text>
+<text x="395.0" y="98" text-anchor="middle" font-size="12" font-family="Arial">风险经验</text>
+<text x="210" y="289.0" text-anchor="end" font-size="12" font-family="Arial">风险经验</text>
+<rect x="220" y="110" width="70" height="70" fill="rgb(37,99,235)" stroke="#111827" stroke-width="1"/>
+<text x="255.0" y="150.0" text-anchor="middle" font-size="14" font-family="Arial">476</text>
+<rect x="290" y="110" width="70" height="70" fill="rgb(228,238,253)" stroke="#111827" stroke-width="1"/>
+<text x="325.0" y="150.0" text-anchor="middle" font-size="14" font-family="Arial">24</text>
+<rect x="360" y="110" width="70" height="70" fill="rgb(239,246,255)" stroke="#111827" stroke-width="1"/>
+<text x="395.0" y="150.0" text-anchor="middle" font-size="14" font-family="Arial">0</text>
+<rect x="220" y="180" width="70" height="70" fill="rgb(239,246,255)" stroke="#111827" stroke-width="1"/>
+<text x="255.0" y="220.0" text-anchor="middle" font-size="14" font-family="Arial">0</text>
+<rect x="290" y="180" width="70" height="70" fill="rgb(239,246,255)" stroke="#111827" stroke-width="1"/>
+<text x="325.0" y="220.0" text-anchor="middle" font-size="14" font-family="Arial">0</text>
+<rect x="360" y="180" width="70" height="70" fill="rgb(239,246,255)" stroke="#111827" stroke-width="1"/>
+<text x="395.0" y="220.0" text-anchor="middle" font-size="14" font-family="Arial">0</text>
+<rect x="220" y="250" width="70" height="70" fill="rgb(239,246,255)" stroke="#111827" stroke-width="1"/>
+<text x="255.0" y="290.0" text-anchor="middle" font-size="14" font-family="Arial">0</text>
+<rect x="290" y="250" width="70" height="70" fill="rgb(239,246,255)" stroke="#111827" stroke-width="1"/>
+<text x="325.0" y="290.0" text-anchor="middle" font-size="14" font-family="Arial">0</text>
+<rect x="360" y="250" width="70" height="70" fill="rgb(239,246,255)" stroke="#111827" stroke-width="1"/>
+<text x="395.0" y="290.0" text-anchor="middle" font-size="14" font-family="Arial">0</text>
+</svg>

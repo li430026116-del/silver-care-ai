@@ -1,0 +1,1873 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>暖芽 (妈妈端)</title>
+    <link rel="stylesheet" href="css/mom-styles.css">
+    <style>
+        /* --- 全局样式 --- */
+        :root {
+            --primary-color: #F8C471;
+            --secondary-color: #FDF6E3;
+            --accent-color: #A9D8B8;
+            --text-color: #585858;
+            --border-color: #E0E0E0;
+            --page-bg-color: #f7f8fa; /* 妈妈端背景色 */
+        }
+        body, html { 
+            margin: 0; 
+            padding: 0; 
+            height: 100%; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; 
+            font-size: 16px; 
+            background-color: transparent;
+            background-image: var(--secondary-color);
+            background-attachment: fixed;
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+        
+        /* 针对移动设备的安全区域适配 */
+        @supports (padding: max(0px)) {
+            body {
+                padding-left: max(0px, env(safe-area-inset-left));
+                padding-right: max(0px, env(safe-area-inset-right));
+                padding-top: max(0px, env(safe-area-inset-top));
+                padding-bottom: max(0px, env(safe-area-inset-bottom));
+            }
+        }
+        .app-shell { max-width: 480px; margin: 0 auto; height: 100%; position: relative; overflow: hidden; background-color: var(--secondary-color); }
+        .app-container {
+            max-width: 480px;
+            margin: 0 auto;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+            background-color: var(--page-bg-color);
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            border: 1px solid #e0e0e0;
+        }
+
+        
+        /* --- Toast 通知 --- */
+        .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background-color: rgba(0,0,0,0.7); color: white; padding: 10px 20px; border-radius: 20px; font-size: 14px; z-index: 1000; opacity: 0; transition: opacity 0.5s, top 0.5s; }
+        .toast.show { opacity: 1; top: 40px; }
+        
+        .page {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            display: none; /* 默认所有页面都隐藏 */
+            flex-direction: column;
+            background-color: var(--secondary-color);
+            overflow-y: auto;
+            box-sizing: border-box;
+        }
+        .page.active { display: flex; }
+        .page-content { flex-grow: 1; padding-bottom: 80px; } 
+
+        /* --- 启动页 & 登录页 --- */
+        #page-splash .splash-container { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%; background: linear-gradient(180deg, var(--secondary-color) 0%, var(--primary-color) 100%); }
+        #page-splash .logo { width: 120px; height: 120px; background-color: white; border-radius: 25%; display: flex; justify-content: center; align-items: center; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        #page-splash .logo-img { width: 100%; height: 100%; object-fit: cover; border-radius: 25%; }
+        #page-splash .app-name { font-size: 32px; font-weight: bold; color: white; margin-top: 20px; text-shadow: 1px 1px 3px rgba(0,0,0,0.1); }
+        #page-splash .app-tagline { font-size: 16px; color: white; opacity: 0.9; margin-top: 5px; }
+
+        #page-login .login-container { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%; padding: 20px; box-sizing: border-box; background-color: var(--secondary-color); }
+        #page-login .logo { width: 100px; height: 100px; background-color: white; border-radius: 22%; display: flex; justify-content: center; align-items: center; box-shadow: 0 8px 15px rgba(0,0,0,0.08); margin-bottom: 30px; }
+        #page-login .logo-img { width: 100%; height: 100%; object-fit: cover; border-radius: 22%;}
+        #page-login .welcome-text { font-size: 24px; font-weight: bold; color: var(--text-color); margin-bottom: 10px; }
+        #page-login .welcome-subtext { font-size: 16px; color: #888; margin-bottom: 40px; text-align: center; }
+        #page-login .login-form { width: 100%; max-width: 300px; }
+        .phone-group { display: flex; gap: 10px; margin-bottom: 15px; }
+        .phone-input { flex-grow: 1; padding: 16px; font-size: 16px; border: 2px solid #ddd; border-radius: 12px; box-sizing: border-box; }
+        .phone-input:focus { border-color: var(--primary-color); outline: none; }
+        #getCodeBtn { padding: 0 15px; font-size: 14px; font-weight: bold; color: white; background-color: var(--primary-color); border: none; border-radius: 12px; cursor: pointer; transition: background-color 0.3s; white-space: nowrap; }
+        #getCodeBtn:disabled { background-color: #ccc; cursor: not-allowed; }
+        .code-input { width: 100%; padding: 16px; font-size: 18px; border: 2px solid #ddd; border-radius: 12px; margin-bottom: 20px; box-sizing: border-box; text-align: center; letter-spacing: 0.5em; }
+        .code-input:focus { border-color: var(--primary-color); outline: none; }
+        .login-btn { width: 100%; max-width: 300px; padding: 18px; font-size: 18px; font-weight: bold; color: white; background-color: var(--primary-color); border: none; border-radius: 12px; cursor: pointer; transition: background-color 0.3s; }
+        .login-btn:disabled { background-color: #ccc; cursor: not-allowed; }
+
+        /* --- 引导页 --- */
+        #page-onboarding-mom { background-color: #fff; justify-content: space-between; }
+        .onboarding-slider { display: flex; flex-grow: 1; width: 100%; overflow: hidden; }
+        .slide { min-width: 100%; display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 40px; box-sizing: border-box; }
+        .slide.active { display: flex; }
+        .slide-image { width: 70%; max-width: 220px; margin-bottom: 40px; border-radius: 20px;}
+        .slide-title { font-size: 24px; font-weight: bold; color: var(--text-color); margin-bottom: 15px; }
+        .slide-description { font-size: 16px; color: #888; line-height: 1.6; }
+        .onboarding-controls { padding: 20px; text-align: center; }
+        .dots-container { display: flex; justify-content: center; margin-bottom: 20px; }
+        .dot { width: 10px; height: 10px; border-radius: 50%; background-color: #ddd; margin: 0 5px; transition: background-color 0.3s; }
+        .dot.active { background-color: var(--primary-color); }
+        .onboarding-btn { width: 100%; max-width: 300px; padding: 18px; font-size: 18px; font-weight: bold; color: white; background-color: var(--primary-color); border: none; border-radius: 12px; cursor: pointer; }
+
+        /* --- 通用 UI --- */
+        .header { background-color: #fff; padding: 15px 20px; text-align: center; font-size: 18px; font-weight: bold; color: var(--text-color); border-bottom: 1px solid #f0f0f0; position: relative; }
+        .bottom-nav { position: absolute; bottom: 0; left: 0; right: 0; height: 65px; background-color: #ffffff; display: flex; justify-content: space-around; align-items: center; box-shadow: 0 -2px 5px rgba(0,0,0,0.08); border-top: 1px solid #f0f0f0; z-index: 100; }
+        .nav-item { position: relative; display: flex; flex-direction: column; align-items: center; color: #999; font-size: 12px; text-decoration: none; padding: 5px 0; cursor: pointer; flex-grow: 1; }
+        .nav-item.active { color: var(--primary-color); font-weight: bold; }
+        .nav-item svg { width: 24px; height: 24px; margin-bottom: 4px; }
+        .back-button { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); width: 30px; height: 30px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .nav-badge { position: absolute; top: 6px; right: 22px; min-width: 18px; height: 18px; padding: 0 6px; border-radius: 10px; background-color: #ff4757; color: #fff; font-size: 11px; display: flex; align-items: center; justify-content: center; box-sizing: border-box; }
+        
+        /* --- 首页 --- */
+        #page-mom-home .search-bar { padding: 10px 15px; background-color: #fff; border-bottom: 1px solid #f0f0f0;}
+        #page-mom-home .search-input { width: 100%; padding: 12px 15px; font-size: 14px; border: none; background-color: #f0f2f5; border-radius: 20px; box-sizing: border-box; text-align: center;}
+        .feed-list { padding: 15px; }
+        .feed-card { background-color: #fff; border-radius: 12px; padding: 20px; margin-bottom: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .feed-card .question-title { font-size: 17px; font-weight: bold; margin: 0 0 10px 0; }
+        .feed-card .answer-summary { font-size: 15px; color: #666; line-height: 1.6; }
+        .empty { padding: 20px; color: #888; text-align: center; }
+        .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+        .tag { font-size: 12px; color: #E59866; background-color: #FEF3E2; padding: 3px 10px; border-radius: 12px; }
+        .ask-button { position: fixed; bottom: 80px; right: calc(50% - 220px); width: 60px; height: 60px; background-color: var(--primary-color); border-radius: 50%; border: none; box-shadow: 0 5px 15px rgba(0,0,0,0.2); cursor: pointer; display: flex; justify-content: center; align-items: center; z-index: 100; }
+        .ask-button-hint { position: fixed; bottom: 85px; right: calc(50% - 140px); background-color: rgba(0,0,0,0.8); color: white; padding: 10px 14px; border-radius: 20px; font-size: 14px; white-space: nowrap; z-index: 99; animation: fadeInOut 6s ease-in-out; }
+        @keyframes fadeInOut { 0% { opacity: 0; transform: translateX(10px); } 20% { opacity: 1; transform: translateX(0); } 80% { opacity: 1; transform: translateX(0); } 100% { opacity: 0; transform: translateX(10px); } }
+        .list-item-badge { min-width: 18px; height: 18px; padding: 0 6px; border-radius: 10px; background-color: #ff4757; color: #fff; font-size: 12px; display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; margin-right: 8px; }
+        .notifications-list { padding: 15px; }
+        .notification-card { background-color: #fff; border-radius: 12px; padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); cursor: pointer; }
+        .notification-card.unread { border: 2px solid rgba(248,196,113,0.7); }
+        .notification-title { font-size: 16px; font-weight: bold; margin: 0 0 8px 0; color: var(--text-color); }
+        .notification-sub { font-size: 14px; margin: 0; color: #666; line-height: 1.5; }
+        .notification-time { font-size: 12px; color: #999; margin-top: 10px; }
+        
+        /* --- 提问弹窗 --- */
+        #ask-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0,0,0,0.5); z-index: 200; display: none; justify-content: center; align-items: center; }
+        #ask-overlay.visible { display: flex; }
+        #mom-answer-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0,0,0,0.5); z-index: 200; display: none; justify-content: center; align-items: center; }
+        #mom-answer-overlay.visible { display: flex; }
+        .ask-modal { background-color: #fff; border-radius: 16px; padding: 25px; width: 90%; max-width: 400px; }
+        .ask-modal h3 { margin: 0 0 20px 0; text-align: center; }
+        .ask-modal textarea { width: 100%; height: 120px; border: 1px solid #ddd; border-radius: 8px; padding: 10px; font-size: 16px; box-sizing: border-box; margin-bottom: 20px; }
+        .ask-modal button { width: 100%; padding: 15px; font-size: 16px; font-weight: bold; color: white; background-color: var(--primary-color); border: none; border-radius: 10px; cursor: pointer; }
+        
+        /* --- 感谢信弹窗 --- */
+        #thanks-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0,0,0,0.5); z-index: 200; display: none; justify-content: center; align-items: center; }
+        #thanks-overlay.visible { display: flex; }
+        .thanks-modal { background-color: #fff; border-radius: 16px; padding: 25px; width: 90%; max-width: 400px; }
+        .thanks-modal h3 { margin: 0 0 12px 0; text-align: center; }
+        .thanks-modal textarea { width: 100%; height: 120px; border: 1px solid #ddd; border-radius: 8px; padding: 10px; font-size: 16px; box-sizing: border-box; margin-bottom: 12px; }
+        .upload-preview { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+        .upload-preview img { width: 100%; height: 80px; object-fit: cover; border-radius: 8px; }
+        .modal-actions { display: flex; gap: 10px; margin-top: 12px; }
+        .modal-actions button { flex: 1; padding: 12px; font-size: 16px; font-weight: bold; color: white; background-color: var(--primary-color); border: none; border-radius: 10px; cursor: pointer; }
+        .modal-actions .secondary { background-color: #ddd; color: #333; }
+        
+        /* --- 感谢信列表样式 --- */
+        .thank-letter-item { 
+            background-color: #fff; 
+            border-radius: 12px; 
+            padding: 15px; 
+            margin-bottom: 12px; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08); 
+            cursor: pointer; 
+            transition: all 0.2s ease;
+        }
+        .thank-letter-item:hover { 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12); 
+            transform: translateY(-1px);
+        }
+        .thank-letter-item .title { 
+            font-size: 16px; 
+            font-weight: bold; 
+            margin-bottom: 8px; 
+            color: var(--text-color);
+        }
+        .thank-letter-item .content { 
+            font-size: 14px; 
+            color: #666; 
+            line-height: 1.5; 
+            margin-bottom: 10px;
+        }
+        .thank-letter-item .meta { 
+            font-size: 12px; 
+            color: #999; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+        }
+        
+        /* --- 感谢信详情弹窗 --- */
+        #thank-letter-detail-overlay { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            right: 0; 
+            bottom: 0; 
+            background-color: rgba(0,0,0,0.5); 
+            z-index: 300; 
+            display: none; 
+            justify-content: center; 
+            align-items: center; 
+        }
+        #thank-letter-detail-overlay.visible { display: flex; }
+        .thank-letter-detail-modal { 
+            background-color: #fff; 
+            border-radius: 16px; 
+            padding: 25px; 
+            width: 90%; 
+            max-width: 500px; 
+            max-height: 80vh; 
+            overflow-y: auto;
+        }
+        .thank-letter-detail-modal h3 { 
+            margin: 0 0 15px 0; 
+            text-align: center; 
+            color: var(--text-color);
+        }
+        .thank-letter-detail-modal .detail-content { 
+            font-size: 16px; 
+            line-height: 1.6; 
+            color: var(--text-color); 
+            margin-bottom: 20px;
+        }
+        .thank-letter-detail-modal .detail-meta { 
+            font-size: 14px; 
+            color: #666; 
+            border-top: 1px solid #f0f0f0; 
+            padding-top: 15px;
+        }
+        .thank-letter-detail-modal .close-btn { 
+            width: 100%; 
+            padding: 12px; 
+            font-size: 16px; 
+            font-weight: bold; 
+            color: white; 
+            background-color: var(--primary-color); 
+            border: none; 
+            border-radius: 10px; 
+            cursor: pointer; 
+            margin-top: 15px;
+        }
+        
+        /* --- 回答详情页 --- */
+        .question-section { padding: 20px; background-color: #fff; border-bottom: 10px solid var(--page-bg-color);}
+        .question-section h2 { margin: 0 0 10px 0; font-size: 22px; }
+        .question-section .author { font-size: 14px; color: #888; }
+        .answer-list { padding: 15px; }
+        .answer-card { background-color: #fff; border-radius: 12px; padding: 20px; margin-bottom: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .answer-header { display: flex; align-items: center; margin-bottom: 15px; }
+        .answer-header img { width: 45px; height: 45px; border-radius: 50%; margin-right: 12px; object-fit: cover; }
+        .answer-header .info .name { font-weight: bold; }
+        .answer-header .info .role { font-size: 12px; color: #fff; background-color: var(--accent-color); padding: 2px 8px; border-radius: 10px; display: inline-block; }
+        .answer-body .refined-suggestions { font-size: 16px; line-height: 1.8; }
+        .answer-body .refined-suggestions p { margin: 12px 0; }
+        .interaction-bar { display: flex; justify-content: space-around; padding-top: 20px; border-top: 1px solid #f0f0f0; margin-top: 20px; }
+        .interaction-btn { background: #f0f2f5; border: none; border-radius: 20px; padding: 10px 20px; font-size: 14px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+        .interaction-btn.active { background-color: #FEF3E2; color: #E59866; }
+        .interaction-btn svg { width: 20px; height: 20px; }
+
+        /* --- 收藏与我的页面 --- */
+        #page-mom-collections .header, #page-mom-honor .header, #page-mom-profile .header { text-align: left; font-size: 22px; }
+        .profile-card-mom { background: #fff; padding: 20px; display: flex; align-items: center; border-bottom: 10px solid var(--page-bg-color); }
+        .avatar-mom { width: 70px; height: 70px; border-radius: 50%; margin-right: 15px; object-fit: cover; }
+        .user-info-mom .name { font-size: 22px; font-weight: bold; margin: 0; }
+        .user-info-mom .tag { font-size: 14px; color: #888; margin: 5px 0 0 0; }
+        .function-list { background-color: #fff; }
+        .list-item { display: flex; justify-content: space-between; align-items: center; padding: 18px 20px; border-bottom: 1px solid #f0f0f0; font-size: 16px; color: var(--text-color); cursor: pointer; }
+        .list-item:last-child { border-bottom: none; }
+        .list-item .arrow { color: #ccc; font-size: 20px; }
+        
+        /* 收藏页顶部标签（书签） */
+        .collections-tabs { display: flex; gap: 8px; padding: 10px 15px; background-color: #fff; position: sticky; top: 0; z-index: 50; border-bottom: 1px solid #f0f0f0; overflow-x: auto; }
+        .collections-tab { padding: 8px 12px; border-radius: 16px; background-color: #f0f2f5; color: #555; font-size: 14px; cursor: pointer; white-space: nowrap; }
+        .collections-tab.active { background-color: #FEF3E2; color: #E59866; font-weight: bold;}
+        .collection-section { padding: 10px 15px; }
+
+        .segment-control { display: flex; margin: 15px; background-color: #fff; border-radius: 12px; padding: 4px; }
+        .segment-btn { flex: 1; padding: 10px 0; border: none; border-radius: 10px; background: transparent; font-size: 15px; font-weight: bold; color: #888; cursor: pointer; }
+        .segment-btn.active { background-color: var(--secondary-color); color: #E59866; }
+        .honor-content { padding: 0 15px 15px 15px; }
+        .badge-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        .badge-item { background: #fff; border-radius: 12px; padding: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); text-align: center; }
+        .badge-icon { width: 90px; height: 90px; border-radius: 50%; margin: 0 auto 10px auto; display: flex; align-items: center; justify-content: center; font-size: 12px; line-height: 1.4; color: #999; background: #f5f5f5; }
+        .badge-icon.unlocked { background: var(--primary-color); color: white; }
+        .badge-name { margin: 0; font-size: 14px; color: #888; font-weight: bold; }
+        .badge-name.unlocked { color: var(--text-color); }
+        
+        /* 宝贝常见问题样式 */
+        .common-issues-list { padding: 15px; }
+        .issue-item { 
+            background: white; 
+            border-radius: 12px; 
+            padding: 16px; 
+            margin-bottom: 12px; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .issue-item:hover { 
+            transform: translateY(-1px); 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15); 
+        }
+        .issue-item h4 { 
+            font-size: 16px; 
+            font-weight: 600; 
+            color: var(--text-color); 
+            margin: 0 0 8px 0; 
+            line-height: 1.4; 
+        }
+        .issue-item .issue-description { 
+            font-size: 14px; 
+            color: #666; 
+            line-height: 1.5; 
+            margin: 0 0 12px 0; 
+        }
+        .issue-item .issue-meta { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            font-size: 12px; 
+            color: #999; 
+        }
+        .issue-item .category { 
+            background: var(--accent-color); 
+            color: white; 
+            padding: 2px 8px; 
+            border-radius: 10px; 
+            font-size: 11px; 
+        }
+        .issue-item .create-time { 
+            color: #999; 
+        }
+
+    </style>
+</head>
+<body>
+    <div class="app-container">
+
+<div class="app-shell">
+    <div class="toast" id="toast"></div>
+
+    <div class="page active" id="page-splash">
+        <div class="splash-container">
+            <div class="logo"><img src="images/logo.png" alt="暖芽Logo" class="logo-img"></div>
+            <h1 class="app-name">暖芽</h1>
+            <p class="app-tagline">科学育儿，温暖守护</p>
+        </div>
+    </div>
+
+    <div class="page" id="page-login">
+        <div class="login-container">
+            <div class="logo"><img src="images/logo.png" alt="暖芽Logo" class="logo-img"></div>
+            <h2 class="welcome-text">欢迎来到暖芽</h2>
+            <p class="welcome-subtext">告别育儿焦虑，收获来自社区的温暖与智慧</p>
+            <div class="login-form">
+                 <div class="phone-group">
+                    <input type="tel" id="phoneInput" class="phone-input" placeholder="请输入手机号码" maxlength="11">
+                    <button id="getCodeBtn" disabled>获取验证码</button>
+                </div>
+                <input type="tel" id="codeInput" class="code-input" placeholder="------" maxlength="6" disabled>
+                <button class="login-btn" id="loginBtn" disabled>登 录</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="page" id="page-onboarding-mom">
+        <div class="onboarding-slider">
+            <div class="slide active">
+                <img src="images/momonboarding1.jpg" alt="随时提问" class="slide-image">
+                <h2 class="slide-title">遇到难题？随时提问</h2>
+                <p class="slide-description">告别信息过载，一键发起求助，<br>让育儿不再焦虑。</p>
+            </div>
+            <div class="slide">
+                <img src="images/momonboarding2.jpg" alt="AI总结" class="slide-image">
+                <h2 class="slide-title">AI总结，只看精华</h2>
+                <p class="slide-description">我们为您提炼长辈经验的精粹，<br>条理清晰，科学可靠。</p>
+            </div>
+             <div class="slide">
+                <img src="images/momonboarding3.jpg" alt="构建宝典" class="slide-image">
+                <h2 class="slide-title">收藏智慧，构建宝典</h2>
+                <p class="slide-description">轻松收藏每一条宝贵经验，<br>打造您专属的育儿知识库。</p>
+            </div>
+        </div>
+        <div class="onboarding-controls">
+            <div class="dots-container" id="dotsContainerMom"></div>
+            <button class="onboarding-btn" id="onboardingBtnMom">下一页</button>
+        </div>
+    </div>
+    
+    <div class="page" id="page-mom-home">
+        <header class="header">发现</header>
+        <div class="page-content">
+            <div class="segment-control qa-segment">
+                <button class="segment-btn active" id="mom-qa-btn-ask" onclick="setMomQaMode('ask')">我要提问</button>
+                <button class="segment-btn" id="mom-qa-btn-answer" onclick="setMomQaMode('answer')">我要解答</button>
+            </div>
+
+            <div id="mom-qa-ask-content">
+                <div class="search-bar">
+                    <div class="search-input-container">
+                        <input type="text" class="search-input" id="searchInput" placeholder="搜索" oninput="MomFunctions.handleSearchInput(event)">
+                        <span class="search-icon">🔍</span>
+                    </div>
+                </div>
+                
+                <!-- 问题标签区域 -->
+                <div class="question-tags-section">
+                    <h4>热门话题</h4>
+                    <div class="tags-container" id="questionTagsContainer">
+                        <button class="question-tag" onclick="MomFunctions.handleTagClick('饮食健康')">饮食健康</button>
+                        <button class="question-tag" onclick="MomFunctions.handleTagClick('睡眠问题')">睡眠问题</button>
+                        <button class="question-tag" onclick="MomFunctions.handleTagClick('行为培养')">行为培养</button>
+                        <button class="question-tag" onclick="MomFunctions.handleTagClick('日常护理')">日常护理</button>
+                        <button class="question-tag" onclick="MomFunctions.handleTagClick('知识启蒙')">知识启蒙</button>
+                        <button class="question-tag" onclick="MomFunctions.handleTagClick('趣味陪伴')">趣味陪伴</button>
+                    </div>
+                </div>
+                
+                <!-- 问题列表区域 -->
+                <div class="feed-list" id="questionsContainer">
+                    <!-- Questions will be dynamically loaded here by JavaScript -->
+                </div>
+            </div>
+
+            <div id="mom-qa-answer-content" style="display: none;">
+                <div class="feed-list">
+                    <div class="feed-card">
+                        <h3 class="question-title">待解答问题</h3>
+                        <p class="answer-summary">选择一个问题，使用文字回答。</p>
+                    </div>
+                </div>
+                <div class="feed-list" id="momUnansweredList"></div>
+            </div>
+        </div>
+        <button class="ask-button" id="momAskButton" onclick="showAskModal()" style="display: none;">
+            <svg viewBox="0 0 24 24" width="28" height="28" stroke="white" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        </button>
+        <div class="ask-button-hint" id="askButtonHint" style="display: none;">点 + 发布问题（这是“提问”入口）</div>
+    </div>
+
+    <div class="page" id="page-mom-answer-detail">
+        <header class="header">
+             <div class="back-button" onclick="navigateTo('page-mom-home')">
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </div>
+            问题详情
+        </header>
+        <div class="page-content" style="padding-bottom: 0;">
+            <div class="question-section" id="questionSection"></div>
+            <div class="answer-list" id="answerList">
+                </div>
+        </div>
+    </div>
+
+    <div class="page" id="page-mom-collections">
+        <div class="page-content">
+            <header class="header">我的收藏</header>
+            <div class="collections-tabs" id="collectionsTabs"></div>
+            <div class="feed-list" id="collectionsList">
+                </div>
+        </div>
+    </div>
+
+    <div class="page" id="page-mom-honor">
+        <div class="page-content">
+            <header class="header">荣誉墙</header>
+            <div class="segment-control">
+                <button class="segment-btn active" id="mom-btn-badges" onclick="showMomHonorTab('badges')">成就徽章</button>
+                <button class="segment-btn" id="mom-btn-letters" onclick="showMomHonorTab('letters')">感谢信</button>
+            </div>
+            <div class="honor-content" id="mom-honor-badges-content">
+                <div class="badge-grid">
+                    <div class="badge-item"><div class="badge-icon unlocked">已于<br>2025-08-02<br>获得</div><p class="badge-name unlocked">首次提问</p></div>
+                    <div class="badge-item"><div class="badge-icon unlocked">已于<br>2025-09-10<br>获得</div><p class="badge-name unlocked">爱心传递</p></div>
+                    <div class="badge-item"><div class="badge-icon">获得<br>10个收藏<br>解锁</div><p class="badge-name">知识收藏家</p></div>
+                    <div class="badge-item"><div class="badge-icon">累计<br>5封感谢<br>解锁</div><p class="badge-name">温暖守护</p></div>
+                </div>
+            </div>
+            <div class="honor-content" id="mom-honor-letters-content" style="display: none;">
+                <div class="feed-list">
+                    <div class="feed-card">
+                        <h3 class="question-title">暂无感谢信数据</h3>
+                        <p class="answer-summary">还没有收到老人们的感谢信，继续解答问题吧！</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="page" id="page-mom-profile">
+        <div class="page-content" style="background-color: var(--secondary-color);">
+            <header class="header">我的</header>
+            <div class="profile-card-mom">
+                <img src="images/momavatar.jpg" alt="用户头像" class="avatar-mom">
+                <div class="user-info-mom">
+                    <p class="name">Cindy</p>
+                    <p class="tag">宝宝 6个月 · 2025年8月加入</p>
+                </div>
+            </div>
+             <div class="function-list" style="margin-top: 10px;">
+                <div class="list-item" onclick="navigateTo('page-mom-notifications')">
+                    <div class="item-left"><span>消息提醒</span></div>
+                    <div class="item-right">
+                        <span class="list-item-badge" id="momMessageBadge" style="display: none;"></span>
+                        <span class="arrow">&gt;</span>
+                    </div>
+                </div>
+                <div class="list-item" onclick="navigateTo('page-mom-my-questions')"><div class="item-left"><span>我的提问</span></div><span class="arrow">&gt;</span></div>
+                <div class="list-item" onclick="navigateTo('page-mom-my-answers')"><div class="item-left"><span>我的回答</span></div><span class="arrow">&gt;</span></div>
+                <div class="list-item" onclick="navigateTo('page-mom-thank-letters')"><div class="item-left"><span>收到的感谢</span></div><span class="arrow">&gt;</span></div>
+                <div class="list-item" onclick="navigateTo('page-mom-common-issues')"><div class="item-left"><span>宝贝常遇问题</span></div><span class="arrow">&gt;</span></div>
+             </div>
+             <div class="function-list" style="margin-top: 10px;">
+                <div class="list-item" onclick="alert('跳转到会员中心')"><div class="item-left"><span>会员中心</span></div><span class="arrow">&gt;</span></div>
+                <div class="list-item" onclick="alert('跳转到设置页')"><div class="item-left"><span>设置</span></div><span class="arrow">&gt;</span></div>
+             </div>
+             <div class="function-list" style="margin-top: 10px;">
+                <div class="list-item" onclick="handleLogout()" style="color: #ff4757;"><div class="item-left"><span>退出登录</span></div><span class="arrow">&gt;</span></div>
+             </div>
+        </div>
+    </div>
+
+    <!-- 消息提醒页面 -->
+    <div class="page" id="page-mom-notifications">
+        <header class="header">
+            <div class="back-button" onclick="navigateTo('page-mom-profile')">
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </div>
+            消息提醒
+        </header>
+        <div class="page-content">
+            <div class="notifications-list" id="momNotificationsList"></div>
+        </div>
+    </div>
+
+    <!-- 我的提问页面 -->
+    <div class="page" id="page-mom-my-questions">
+        <header class="header">
+            <div class="back-button" onclick="navigateTo('page-mom-profile')">
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </div>
+            我的提问
+        </header>
+        <div class="page-content">
+            <div class="my-questions-list" id="myQuestionsList">
+                <!-- 问题列表将在这里动态加载 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 收到的感谢页面 -->
+    <div class="page" id="page-mom-thank-letters">
+        <header class="header">
+            <div class="back-button" onclick="navigateTo('page-mom-profile')">
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </div>
+            收到的感谢
+        </header>
+        <div class="page-content">
+            <div class="thank-letters-list" id="thankLettersList">
+                <!-- 感谢信列表将在这里动态加载 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 我的回答页面 -->
+    <div class="page" id="page-mom-my-answers">
+        <header class="header">
+            <div class="back-button" onclick="navigateTo('page-mom-profile')">
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </div>
+            我的回答
+        </header>
+        <div class="page-content">
+            <div class="my-questions-list" id="myAnswersListMom"></div>
+        </div>
+    </div>
+
+    <!-- 感谢信详情弹窗 -->
+    <div id="thank-letter-detail-overlay">
+        <div class="thank-letter-detail-modal">
+            <h3 id="thank-letter-detail-title">感谢信详情</h3>
+            <div class="detail-content" id="thank-letter-detail-content">
+                <!-- 详情内容 -->
+            </div>
+            <div class="detail-meta" id="thank-letter-detail-meta">
+                <!-- 元信息 -->
+            </div>
+            <button class="close-btn" onclick="closeThankLetterDetail()">关闭</button>
+        </div>
+    </div>
+
+    <!-- 宝贝常遇问题页面 -->
+    <div class="page" id="page-mom-common-issues">
+        <header class="header">
+            <div class="back-button" onclick="navigateTo('page-mom-profile')">
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </div>
+            宝贝常遇问题
+        </header>
+        <div class="page-content">
+            <div class="common-issues-list" id="commonIssuesList">
+                <!-- 常见问题列表将在这里动态加载 -->
+            </div>
+        </div>
+    </div>
+
+    <nav class="bottom-nav" id="bottomNavMom" style="display: none;">
+        <div class="nav-item active" data-page="page-mom-home" onclick="navigateTo('page-mom-home')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+            <span>首页</span>
+        </div>
+        <div class="nav-item" data-page="page-mom-honor" onclick="navigateTo('page-mom-honor')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
+            <span>荣誉墙</span>
+        </div>
+        <div class="nav-item" data-page="page-mom-collections" onclick="navigateTo('page-mom-collections')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+            <span>收藏</span>
+        </div>
+        <div class="nav-item" data-page="page-mom-profile" onclick="navigateTo('page-mom-profile')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="10" r="3"></circle><path d="M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662"></path></svg>
+            <span class="nav-badge" id="momNavNotifBadge" style="display: none;"></span>
+            <span>我的</span>
+        </div>
+    </nav>
+    
+    <div id="ask-overlay">
+        <div class="ask-modal">
+            <h3>提出您的问题</h3>
+            <form id="askQuestionForm">
+                <input type="text" name="title" placeholder="问题标题" required style="margin-bottom: 10px; padding: 10px; width: 100%; border: 1px solid #ddd; border-radius: 5px;">
+                <textarea name="content" placeholder="请详细描述您遇到的育儿难题..." required style="margin-bottom: 10px; padding: 10px; width: 100%; height: 100px; border: 1px solid #ddd; border-radius: 5px;"></textarea>
+                <select name="category" style="margin-bottom: 10px; padding: 10px; width: 100%; border: 1px solid #ddd; border-radius: 5px;">
+                    <option value="">选择问题类别</option>
+                    <option value="饮食健康">饮食健康</option>
+                    <option value="睡眠问题">睡眠问题</option>
+                    <option value="行为培养">行为培养</option>
+                    <option value="日常护理">日常护理</option>
+                    <option value="知识启蒙">知识启蒙</option>
+                    <option value="趣味陪伴">趣味陪伴</option>
+                </select>
+                <input type="number" name="baby_age_months" placeholder="宝宝月龄" min="0" max="60" style="margin-bottom: 10px; padding: 10px; width: 100%; border: 1px solid #ddd; border-radius: 5px;">
+                <select name="urgency_level" style="margin-bottom: 10px; padding: 10px; width: 100%; border: 1px solid #ddd; border-radius: 5px;">
+                    <option value="normal">一般</option>
+                    <option value="urgent">紧急</option>
+                    <option value="very_urgent">非常紧急</option>
+                </select>
+                <div class="modal-actions">
+                    <button type="submit">发布问题</button>
+                    <button type="button" class="secondary" onclick="hideAskModal()">取消</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="mom-answer-overlay">
+        <div class="ask-modal">
+            <h3 id="momAnswerModalTitle">文字解答</h3>
+            <div style="margin-bottom: 10px; color: #666; font-size: 14px;" id="momAnswerModalQuestion"></div>
+            <textarea id="momAnswerTextarea" placeholder="请输入你的解答..." required style="margin-bottom: 10px; padding: 10px; width: 100%; height: 120px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box;"></textarea>
+            <div id="momAnswerAnalysisPanel" style="display:none; margin-top: 12px;">
+                <div style="margin-bottom: 8px; font-weight: bold; color: #555;">AI经验分析</div>
+                <div id="momAnswerAnalysisContent" class="analysis-block">AI分析中...</div>
+            </div>
+            <div class="modal-actions">
+                <button type="button" id="momAnswerAnalyzeBtn" onclick="analyzeMomTextAnswer()">先分析</button>
+                <button type="button" id="momAnswerSubmitBtn" onclick="confirmSubmitMomTextAnswer()" disabled>确认提交</button>
+                <button type="button" class="secondary" onclick="closeMomAnswerModal()">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="thanks-overlay">
+        <div class="thanks-modal">
+            <h3>发送感谢信</h3>
+            <textarea id="thanksTextarea" placeholder="写下你的感谢话语..." required style="margin-bottom: 10px; padding: 10px; width: 100%; height: 100px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box;"></textarea>
+            <div class="modal-actions">
+                <button type="button" onclick="submitThanks()">发送</button>
+                <button type="button" class="secondary" onclick="hideThanksModal()">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- 数据和状态 ---
+    let currentSlideMom = 0;
+    let selectedQuestionId = null;
+    let selectedQuestionTitle = '';
+    let currentCollectionsFilter = '全部';
+
+    // 问题与答案数据
+    const questionsData = {
+        '101': { title: '宝宝不爱吃辅食怎么办？' },
+        '102': { title: '宝宝频繁夜醒怎么处理？' },
+        '103': { title: '如何正确给新生儿剪指甲？' },
+        '104': { title: '一岁多宝宝爱打人怎么引导？' }
+    };
+    
+    // --- 导航逻辑 ---
+    const pages = document.querySelectorAll('.page');
+    const bottomNavMom = document.getElementById('bottomNavMom');
+
+    function navigateTo(pageId, data = {}) {
+        pages.forEach(page => page.classList.remove('active'));
+        const targetPage = document.getElementById(pageId);
+        if (targetPage) {
+            targetPage.classList.add('active');
+        }
+
+        const isMomPage = pageId.startsWith('page-mom');
+        
+        if (isMomPage) {
+            bottomNavMom.style.display = 'flex';
+            bottomNavMom.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.toggle('active', item.dataset.page === pageId);
+            });
+        } else {
+            bottomNavMom.style.display = 'none';
+        }
+        
+        if (pageId === 'page-login') {
+            resetLoginState();
+        }
+        if (pageId === 'page-mom-home') {
+            const savedMode = localStorage.getItem('nuanya:mom_qa_mode') || 'ask';
+            setMomQaMode(savedMode, true);
+            renderTagsForMomHome();
+            // 初始加载全部问题
+            if (window.MomFunctions) {
+                MomFunctions.searchQuestions('').then(() => {
+                    MomFunctions.renderQuestions();
+                });
+            }
+        }
+        if (pageId === 'page-mom-answer-detail') {
+            renderAnswerDetail(data.questionId || selectedQuestionId, data.title || selectedQuestionTitle);
+        }
+        if (pageId === 'page-mom-collections') {
+            renderCollectionsTabs();
+            // 使用MomFunctions中的渲染函数
+            MomFunctions.loadFavorites().then(() => {
+                MomFunctions.renderFavorites();
+            });
+        }
+        if (pageId === 'page-mom-honor') {
+            showMomHonorTab('badges');
+            renderThankLetters();
+        }
+        // 添加我的页面数据加载逻辑
+        if (pageId === 'page-mom-my-questions') {
+            renderMyQuestions();
+        }
+        if (pageId === 'page-mom-my-answers') {
+            renderMomMyAnswers();
+        }
+        if (pageId === 'page-mom-thank-letters') {
+            renderThankLetters();
+        }
+        if (pageId === 'page-mom-common-issues') {
+            renderCommonIssues();
+        }
+        if (pageId === 'page-mom-profile') {
+            syncMomAnswerNotifications();
+            updateMomNotificationBadges();
+        }
+        if (pageId === 'page-mom-notifications') {
+            syncMomAnswerNotifications();
+            renderMomNotifications();
+            updateMomNotificationBadges();
+        }
+    }
+    
+    // --- 页面专属逻辑 ---
+
+    function showMomHonorTab(tabName) {
+        document.getElementById('mom-btn-badges').classList.remove('active');
+        document.getElementById('mom-btn-letters').classList.remove('active');
+        document.getElementById('mom-honor-badges-content').style.display = 'none';
+        document.getElementById('mom-honor-letters-content').style.display = 'none';
+
+        document.getElementById(`mom-btn-${tabName}`).classList.add('active');
+        document.getElementById(`mom-honor-${tabName}-content`).style.display = 'block';
+    }
+    
+    // Toast 通知
+    const toast = document.getElementById('toast');
+    function showToast(message) {
+        toast.textContent = message;
+        toast.classList.add('show');
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 2000);
+    }
+
+    function readStorageJson(key, fallbackValue) {
+        try {
+            const raw = localStorage.getItem(key);
+            if (!raw) return fallbackValue;
+            return JSON.parse(raw);
+        } catch {
+            return fallbackValue;
+        }
+    }
+
+    function writeStorageJson(key, value) {
+        try {
+            localStorage.setItem(key, JSON.stringify(value));
+        } catch {}
+    }
+
+    function setMomQaMode(mode, skipSave = false) {
+        const askBtn = document.getElementById('mom-qa-btn-ask');
+        const answerBtn = document.getElementById('mom-qa-btn-answer');
+        const askContent = document.getElementById('mom-qa-ask-content');
+        const answerContent = document.getElementById('mom-qa-answer-content');
+        const askButton = document.getElementById('momAskButton');
+
+        if (!askBtn || !answerBtn || !askContent || !answerContent || !askButton) return;
+
+        const targetMode = mode === 'answer' ? 'answer' : 'ask';
+        askBtn.classList.toggle('active', targetMode === 'ask');
+        answerBtn.classList.toggle('active', targetMode === 'answer');
+        askContent.style.display = targetMode === 'ask' ? 'block' : 'none';
+        answerContent.style.display = targetMode === 'answer' ? 'block' : 'none';
+        askButton.style.display = 'none'; // 默认隐藏，由下方延迟逻辑决定显示
+
+        if (!skipSave) localStorage.setItem('nuanya:mom_qa_mode', targetMode);
+        if (targetMode === 'ask') {
+            // 延迟显示加号按钮和气泡提示，避免在过场动画期间出现
+            setTimeout(() => {
+                const currentMode = localStorage.getItem('nuanya:mom_qa_mode') || 'ask';
+                if (currentMode === 'ask' && document.getElementById('page-mom-home').classList.contains('active')) {
+                    askButton.style.display = 'flex';
+                    showAskButtonHint();
+                }
+            }, 500);
+        }
+        if (targetMode === 'answer') loadMomUnansweredQuestions();
+    }
+
+    function openElderAnswerApp() {
+        window.location.href = 'nuanya_demo.html';
+    }
+
+    let currentMomAnswerQuestion = null;
+
+    function getApiBaseForMom() {
+        if (window.location && window.location.port === '8000') return '';
+        return 'http://127.0.0.1:8000';
+    }
+
+    async function loadMomUnansweredQuestions() {
+        const container = document.getElementById('momUnansweredList');
+        if (!container) return;
+        container.innerHTML = '<div class="feed-card"><p class="answer-summary">加载中...</p></div>';
+
+        try {
+            const json = await window.apiGet('/api/elder/questions/unanswered');
+            if (!json || json.code !== 200 || !Array.isArray(json.data)) {
+                throw new Error((json && json.message) || '加载失败');
+            }
+
+            if (json.data.length === 0) {
+                container.innerHTML = '<div class="feed-card"><p class="answer-summary">暂无待解答问题</p></div>';
+                return;
+            }
+
+            container.innerHTML = '';
+            json.data.forEach(q => {
+                const card = document.createElement('div');
+                card.className = 'feed-card';
+                card.onclick = () => openMomAnswerModal(q);
+                card.innerHTML = `
+                    <h3 class="question-title">${q.title || ''}</h3>
+                    <p class="answer-summary">${q.content || ''}</p>
+                `;
+                container.appendChild(card);
+            });
+        } catch (e) {
+            container.innerHTML = `<div class="feed-card"><p class="answer-summary">加载失败：${e.message}</p></div>`;
+        }
+    }
+
+    function openMomAnswerModal(question) {
+        currentMomAnswerQuestion = question || null;
+        const overlay = document.getElementById('mom-answer-overlay');
+        const qEl = document.getElementById('momAnswerModalQuestion');
+        const textarea = document.getElementById('momAnswerTextarea');
+        if (qEl) qEl.textContent = (question && question.title) ? `问题：${question.title}` : '';
+        if (textarea) textarea.value = '';
+        if (overlay) overlay.classList.add('visible');
+        if (textarea) textarea.focus();
+    }
+
+    function closeMomAnswerModal() {
+        const overlay = document.getElementById('mom-answer-overlay');
+        if (overlay) overlay.classList.remove('visible');
+        currentMomAnswerQuestion = null;
+        const textarea = document.getElementById('momAnswerTextarea');
+        if (textarea) textarea.value = '';
+        const panel = document.getElementById('momAnswerAnalysisPanel');
+        const content = document.getElementById('momAnswerAnalysisContent');
+        const submitBtn = document.getElementById('momAnswerSubmitBtn');
+        if (panel) panel.style.display = 'none';
+        if (content) content.innerHTML = 'AI分析中...';
+        if (submitBtn) submitBtn.disabled = true;
+    }
+
+    // 第一步：先做 AI 分析，展示在面板里
+    async function analyzeMomTextAnswer() {
+        const textarea = document.getElementById('momAnswerTextarea');
+        const answerText = (textarea && textarea.value ? textarea.value : '').trim();
+        if (!answerText) {
+            showToast('请输入解答内容');
+            return;
+        }
+        if (!currentMomAnswerQuestion || !currentMomAnswerQuestion.id) {
+            showToast('请选择要解答的问题');
+            return;
+        }
+
+        const panel = document.getElementById('momAnswerAnalysisPanel');
+        const content = document.getElementById('momAnswerAnalysisContent');
+        const submitBtn = document.getElementById('momAnswerSubmitBtn');
+        if (panel) panel.style.display = 'block';
+
+        if (window.ExperienceAnalyzer && content) {
+            await window.ExperienceAnalyzer.renderInto(content, answerText, '育儿/健康经验');
+            if (submitBtn) submitBtn.disabled = false;
+        } else {
+            if (content) content.innerHTML = `<div>未加载分析模块，无法分析</div>`;
+            if (submitBtn) submitBtn.disabled = false; // 仍允许提交
+        }
+    }
+
+    // 第二步：确认后再提交
+    async function confirmSubmitMomTextAnswer() {
+        const textarea = document.getElementById('momAnswerTextarea');
+        const answerText = (textarea && textarea.value ? textarea.value : '').trim();
+        if (!answerText) {
+            showToast('请输入解答内容');
+            return;
+        }
+        if (!currentMomAnswerQuestion || !currentMomAnswerQuestion.id) {
+            showToast('请选择要解答的问题');
+            return;
+        }
+
+        try {
+            const json = await window.apiPost('/api/answers', {
+                question_id: currentMomAnswerQuestion.id,
+                answer_text: answerText
+            });
+            if (json && json.code === 200) {
+                showToast('解答提交成功');
+                closeMomAnswerModal();
+                loadMomUnansweredQuestions();
+            } else {
+                throw new Error((json && json.message) || '提交失败');
+            }
+        } catch (e) {
+            showToast(`提交失败：${e.message}`);
+        }
+    }
+
+    function readMomNotifications() {
+        return readStorageJson('nuanya:mom_notifications', []);
+    }
+
+    function writeMomNotifications(list) {
+        writeStorageJson('nuanya:mom_notifications', list);
+    }
+
+    function pushMomNotification(notification) {
+        const list = readMomNotifications();
+        list.unshift(notification);
+        writeMomNotifications(list.slice(0, 50));
+    }
+
+    function getMomUnreadCount() {
+        return readMomNotifications().filter(n => n && n.unread).length;
+    }
+
+    function updateMomNotificationBadges() {
+        const unreadCount = getMomUnreadCount();
+        const badge1 = document.getElementById('momMessageBadge');
+        const badge2 = document.getElementById('momNavNotifBadge');
+
+        if (badge1) {
+            badge1.style.display = unreadCount > 0 ? 'inline-flex' : 'none';
+            badge1.textContent = unreadCount > 99 ? '99+' : String(unreadCount);
+        }
+        if (badge2) {
+            badge2.style.display = unreadCount > 0 ? 'flex' : 'none';
+            badge2.textContent = unreadCount > 99 ? '99+' : String(unreadCount);
+        }
+    }
+
+    async function syncMomAnswerNotifications() {
+        try {
+            const response = await MomAPI.getMyQuestions(1, 50);
+            if (!response || !response.success || !response.data || !Array.isArray(response.data.questions)) return;
+
+            const key = 'nuanya:mom_question_answer_counts';
+            const initKey = 'nuanya:mom_question_answer_counts_initialized';
+            const answerCounts = readStorageJson(key, {});
+            const questions = response.data.questions;
+
+            questions.forEach(q => {
+                const qid = q.id;
+                const prevCount = Number(answerCounts[qid] || 0);
+                const nextCount = Number(q.answer_count || 0);
+                if (localStorage.getItem(initKey) && nextCount > prevCount) {
+                    pushMomNotification({
+                        id: `mom_ans_${Date.now()}_${Math.random().toString(16).slice(2)}`,
+                        type: 'answer',
+                        unread: true,
+                        question_id: qid,
+                        question_title: q.title || '',
+                        create_time: new Date().toISOString(),
+                        message: `你的问题有新回答（共 ${nextCount} 条）`
+                    });
+                }
+                answerCounts[qid] = nextCount;
+            });
+
+            writeStorageJson(key, answerCounts);
+            if (!localStorage.getItem(initKey)) localStorage.setItem(initKey, 'true');
+        } finally {
+            updateMomNotificationBadges();
+        }
+    }
+
+    function renderMomNotifications() {
+        const container = document.getElementById('momNotificationsList');
+        if (!container) return;
+
+        const list = readMomNotifications();
+        if (!list.length) {
+            container.innerHTML = '<div class="empty">暂无消息</div>';
+            return;
+        }
+
+        container.innerHTML = '';
+        list.forEach(n => {
+            const card = document.createElement('div');
+            card.className = `notification-card ${n.unread ? 'unread' : ''}`;
+            const timeText = n.create_time ? new Date(n.create_time).toLocaleString() : '';
+            card.innerHTML = `
+                <p class="notification-title">${n.message || '新消息'}</p>
+                <p class="notification-sub">${n.question_title || ''}</p>
+                <div class="notification-time">${timeText}</div>
+            `;
+            card.onclick = () => openMomNotification(n.id);
+            container.appendChild(card);
+        });
+    }
+
+    function openMomNotification(notificationId) {
+        const list = readMomNotifications();
+        const idx = list.findIndex(n => n && n.id === notificationId);
+        if (idx === -1) return;
+        const notification = list[idx];
+        list[idx] = { ...notification, unread: false };
+        writeMomNotifications(list);
+        updateMomNotificationBadges();
+
+        if (notification.question_id) {
+            selectedQuestionId = notification.question_id;
+            selectedQuestionTitle = notification.question_title || '';
+            navigateTo('page-mom-answer-detail', { questionId: notification.question_id, title: notification.question_title || '' });
+        }
+    }
+    
+    // 显示回答详情页面
+    function showAnswerDetail(questionId, questionTitle) {
+        selectedQuestionId = questionId;
+        selectedQuestionTitle = questionTitle;
+        navigateTo('page-mom-answer-detail', { questionId: questionId, title: questionTitle });
+    }
+    
+    // 渲染回答详情页面
+    async function renderAnswerDetail(questionId, questionTitle) {
+        if (!questionId) return;
+        
+        try {
+            // 获取问题详情
+            const questionResponse = await MomAPI.getQuestionDetail(questionId);
+            if (!questionResponse.success) {
+                console.error('获取问题详情失败:', questionResponse);
+                showToast('获取问题详情失败');
+                return;
+            }
+            
+            const question = questionResponse.data;
+            
+            // 渲染问题部分
+            const questionSection = document.getElementById('questionSection');
+            
+            // 安全处理tags字段
+            let tagsHtml = '';
+            if (question.tags && Array.isArray(question.tags) && question.tags.length > 0) {
+                tagsHtml = question.tags.map(tag => `<span class="tag">${tag}</span>`).join('');
+            }
+            
+            questionSection.innerHTML = `
+                <h2>${question.title || questionTitle || '问题详情'}</h2>
+                <p class="author">提问者：${question.author || '匿名用户'} · ${question.create_time ? new Date(question.create_time).toLocaleDateString() : ''}</p>
+                <div class="question-content" style="margin-top: 15px; line-height: 1.6; color: #666;">
+                    ${question.content || '暂无详细内容'}
+                </div>
+                <div class="tags" style="margin-top: 15px;">
+                    ${tagsHtml}
+                </div>
+            `;
+            
+            // 获取回答列表
+            console.log('正在获取问题ID为', questionId, '的回答列表...');
+            const answersResponse = await MomAPI.getAnswers(questionId);
+            console.log('回答列表响应:', answersResponse);
+            
+            if (!answersResponse.success) {
+                console.error('获取回答列表失败:', answersResponse);
+                showToast('获取回答列表失败: ' + (answersResponse.message || '未知错误'));
+                // 即使获取回答失败，也显示空状态而不是直接返回
+                const answerList = document.getElementById('answerList');
+                answerList.innerHTML = '<div class="empty">获取回答失败，请刷新重试</div>';
+                return;
+            }
+            
+            const answers = answersResponse.data || [];
+            console.log('获取到的回答数量:', answers.length);
+            
+            // 渲染回答列表
+            const answerList = document.getElementById('answerList');
+            if (answers.length === 0) {
+                answerList.innerHTML = '<div class="empty">暂无回答</div>';
+                return;
+            }
+            
+            answerList.innerHTML = answers.map(answer => `
+                <div class="answer-card">
+                    <div class="answer-header">
+                        <img src="${answer.avatar || 'images/avatar-elder.jpg'}" alt="回答者头像">
+                        <div class="info">
+                            <div class="name">${answer.author || '经验丰富的长辈'}</div>
+                            <div class="role">育儿专家</div>
+                        </div>
+                    </div>
+                    <div class="answer-body">
+                        <div class="refined-suggestions">
+                            <div class="answer-text-source" style="display:none;">${(answer.content || answer.refined_suggestions || '').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
+                            <div class="answer-analysis" data-analyze="1">AI分析中...</div>
+                        </div>
+                    </div>
+                    <div class="interaction-bar">
+                        <button class="interaction-btn like-btn" data-answer-id="${answer.id}" onclick="toggleLike(${answer.id})">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                            </svg>
+                            点赞 ${answer.likes_count || 0}
+                        </button>
+                        <button class="interaction-btn favorite-btn" data-answer-id="${answer.id}" onclick="toggleFavorite(${answer.id})">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                            </svg>
+                            收藏
+                        </button>
+                        <button class="interaction-btn thanks-btn" data-answer-id="${answer.id}" onclick="showThanksModal(${answer.id})">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                            </svg>
+                            感谢
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+
+            // 对每条回答做统一“经验分析”（包含总结+结构化+可信度+评分+推荐）
+            if (window.ExperienceAnalyzer) {
+                const blocks = answerList.querySelectorAll('.answer-analysis[data-analyze="1"]');
+                blocks.forEach((el, idx) => {
+                    const card = el.closest('.answer-card');
+                    const sourceEl = card ? card.querySelector('.answer-text-source') : null;
+                    const text = sourceEl ? sourceEl.textContent : '';
+                    window.ExperienceAnalyzer.renderInto(el, text, '育儿/健康经验');
+                });
+            }
+            
+            // 更新按钮状态
+            await updateInteractionButtonStates(questionId);
+            
+        } catch (error) {
+            console.error('渲染回答详情失败:', error);
+            showToast('加载详情失败，请重试: ' + error.message);
+            // 显示错误状态而不是空白页面
+            const answerList = document.getElementById('answerList');
+            if (answerList) {
+                answerList.innerHTML = '<div class="empty">加载失败，请刷新重试</div>';
+            }
+        }
+    }
+    
+    // 更新交互按钮状态
+    async function updateInteractionButtonStates(questionId) {
+        try {
+            // 获取用户的点赞和收藏状态
+            const userInteractions = await MomAPI.getUserInteractions(questionId);
+            if (userInteractions.success && userInteractions.data) {
+                const { likes, favorites } = userInteractions.data;
+                
+                // 更新点赞按钮状态
+                likes.forEach(likeId => {
+                    const likeBtn = document.querySelector(`.like-btn[data-answer-id="${likeId}"]`);
+                    if (likeBtn) {
+                        likeBtn.classList.add('active');
+                    }
+                });
+                
+                // 更新收藏按钮状态
+                favorites.forEach(favoriteId => {
+                    const favoriteBtn = document.querySelector(`.favorite-btn[data-answer-id="${favoriteId}"]`);
+                    if (favoriteBtn) {
+                        favoriteBtn.classList.add('active');
+                    }
+                });
+            }
+        } catch (error) {
+            console.error('更新按钮状态失败:', error);
+        }
+    }
+    
+    // 点赞功能
+    async function toggleLike(answerId) {
+        try {
+            const response = await MomAPI.toggleLike(answerId);
+            if (response.success) {
+                const likeBtn = document.querySelector(`.like-btn[data-answer-id="${answerId}"]`);
+                if (likeBtn) {
+                    // 根据点赞状态更新按钮样式
+                    if (response.data.liked) {
+                        likeBtn.classList.add('active');
+                    } else {
+                        likeBtn.classList.remove('active');
+                    }
+                    // 使用后端返回的准确点赞数更新显示
+                    const likeCount = response.data.like_count || 0;
+                    likeBtn.innerHTML = `
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                        </svg>
+                        点赞 ${likeCount}
+                    `;
+                }
+                showToast(response.data.liked ? '点赞成功' : '取消点赞');
+            } else {
+                showToast('操作失败，请重试');
+            }
+        } catch (error) {
+            console.error('点赞操作失败:', error);
+            showToast('网络错误，请重试');
+        }
+    }
+    
+    // 收藏功能
+    async function toggleFavorite(answerId) {
+        try {
+            const response = await MomAPI.toggleFavorite(answerId);
+            if (response.success) {
+                const favoriteBtn = document.querySelector(`.favorite-btn[data-answer-id="${answerId}"]`);
+                if (favoriteBtn) {
+                    favoriteBtn.classList.toggle('active');
+                }
+                showToast(response.data.favorited ? '收藏成功' : '取消收藏');
+            } else {
+                showToast('操作失败，请重试');
+            }
+        } catch (error) {
+            console.error('收藏操作失败:', error);
+            showToast('网络错误，请重试');
+        }
+    }
+    
+    // 显示感谢信弹窗
+    function showThanksModal(answerId) {
+        currentAnswerId = answerId;
+        const thanksOverlay = document.getElementById('thanks-overlay');
+        const thanksTextarea = document.getElementById('thanksTextarea');
+        thanksTextarea.value = '';
+        thanksOverlay.classList.add('visible');
+    }
+    
+    // 隐藏感谢信弹窗
+    function hideThanksModal() {
+        const thanksOverlay = document.getElementById('thanks-overlay');
+        thanksOverlay.classList.remove('visible');
+        currentAnswerId = null;
+    }
+    
+    // 提交感谢信
+    async function submitThanks() {
+        const thanksTextarea = document.getElementById('thanksTextarea');
+        const content = thanksTextarea.value.trim();
+        
+        if (!content) {
+            showToast('请输入感谢内容');
+            return;
+        }
+        
+        if (!currentAnswerId) {
+            showToast('系统错误，请重试');
+            return;
+        }
+        
+        try {
+            const response = await MomAPI.submitThanks(currentAnswerId, content);
+            if (response.success) {
+                showToast('感谢信发送成功');
+                hideThanksModal();
+            } else {
+                showToast('发送失败，请重试');
+            }
+        } catch (error) {
+            console.error('提交感谢信失败:', error);
+            showToast('网络错误，请重试');
+        }
+    }
+    
+    // 全局变量
+    let currentAnswerId = null;
+    function renderCollectionsTabs() {
+    const tabsContainer = document.getElementById('collectionsTabs');
+        if (!tabsContainer) return;
+        const categories = ['全部', '饮食健康', '睡眠问题', '日常护理', '行为培养', '知识启蒙', '趣味陪伴'];
+        tabsContainer.innerHTML = '';
+        categories.forEach(cat => {
+            const tab = document.createElement('div');
+            tab.className = 'collections-tab';
+            if (cat === currentCollectionsFilter) tab.classList.add('active');
+            tab.textContent = cat;
+            tab.onclick = async () => {
+                currentCollectionsFilter = cat;
+                renderCollectionsTabs();
+                // 重新加载对应标签的收藏数据
+                await MomFunctions.loadFavorites(1, cat);
+                MomFunctions.renderFavorites(cat);
+            };
+            tabsContainer.appendChild(tab);
+        });
+    }
+
+    // 引导页逻辑
+    const onboardingSlidesMom = document.querySelectorAll('#page-onboarding-mom .slide');
+    const dotsContainerMom = document.getElementById('dotsContainerMom');
+    const onboardingBtnMom = document.getElementById('onboardingBtnMom');
+    
+    function setupOnboardingMom() {
+        if (!dotsContainerMom) return;
+        dotsContainerMom.innerHTML = '';
+        for (let i = 0; i < onboardingSlidesMom.length; i++) {
+            const dot = document.createElement('div');
+            dot.classList.add('dot');
+            dotsContainerMom.appendChild(dot);
+        }
+        updateOnboardingUIMom();
+    }
+
+    function updateOnboardingUIMom() {
+        onboardingSlidesMom.forEach((slide, index) => {
+            slide.classList.toggle('active', index === currentSlideMom);
+        });
+        const dots = dotsContainerMom.querySelectorAll('.dot');
+        if(dots.length > 0) {
+            dots.forEach((dot, index) => {
+                dot.classList.toggle('active', index === currentSlideMom);
+            });
+        }
+        if (currentSlideMom === onboardingSlidesMom.length - 1) {
+            onboardingBtnMom.textContent = '开启我的暖芽之旅';
+        } else {
+            onboardingBtnMom.textContent = '下一页';
+        }
+    }
+
+    // 提问弹窗逻辑
+    const askOverlay = document.getElementById('ask-overlay');
+    function showAskModal() { askOverlay.classList.add('visible'); }
+    function hideAskModal() { askOverlay.classList.remove('visible'); }
+    function submitQuestion() {
+        hideAskModal();
+        showAnswerDetail('q_new', document.querySelector('#ask-overlay textarea').value || '我新提出的问题');
+    }
+    
+    // 感谢信弹窗逻辑
+    const thanksOverlay = document.getElementById('thanks-overlay');
+    const thanksFileInput = document.getElementById('thanksFileInput');
+    const thanksPreview = document.getElementById('thanksPreview');
+    const thanksText = document.getElementById('thanksText');
+    function showThanksModal() { if (thanksOverlay) thanksOverlay.classList.add('visible'); }
+    function hideThanksModal() {
+        if (thanksOverlay) thanksOverlay.classList.remove('visible');
+        if (thanksFileInput) thanksFileInput.value = '';
+        if (thanksPreview) thanksPreview.innerHTML = '';
+        if (thanksText) thanksText.value = '';
+    }
+    function handleThanksFiles(files) {
+        if (!thanksPreview) return;
+        thanksPreview.innerHTML = '';
+        Array.from(files).slice(0, 3).forEach(file => { // Limit to 3 images
+            const reader = new FileReader();
+            reader.onload = e => {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                thanksPreview.appendChild(img);
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+    function submitThanks() {
+        hideThanksModal();
+        showToast('感谢信已发送给老人！');
+    }
+    
+    function toggleActive(button) {
+        button.classList.toggle('active');
+    }
+    
+    // 登录页逻辑
+    const phoneInput = document.getElementById('phoneInput');
+    const loginBtn = document.getElementById('loginBtn');
+
+    function resetLoginState() {
+        if (phoneInput) phoneInput.value = '';
+        if (loginBtn) loginBtn.disabled = true;
+    }
+
+    // --- 初始化和事件绑定 ---
+    function initializeApp() {
+        // 绑定所有静态按钮的事件
+        if(onboardingBtnMom) {
+            onboardingBtnMom.addEventListener('click', () => {
+                if (currentSlideMom < onboardingSlidesMom.length - 1) {
+                    currentSlideMom++;
+                    updateOnboardingUIMom();
+                } else {
+                    navigateTo('page-mom-home'); 
+                }
+            });
+        }
+
+        if(askOverlay) {
+            askOverlay.addEventListener('click', function(event) {
+                if (event.target === this) hideAskModal();
+            });
+        }
+        const tfi = document.getElementById('thanksFileInput');
+        if (thanksOverlay) {
+            thanksOverlay.addEventListener('click', function(event) {
+                if (event.target === this) hideThanksModal();
+            });
+        }
+        if (tfi) {
+            tfi.addEventListener('change', (e) => handleThanksFiles(e.target.files));
+        }
+
+        // 登录页交互
+        if (phoneInput && loginBtn) {
+            phoneInput.addEventListener('input', () => {
+                const isValidPhone = phoneInput.value.length === 11 && /^\d{11}$/.test(phoneInput.value);
+                loginBtn.disabled = !isValidPhone;
+            });
+
+            loginBtn.addEventListener('click', () => {
+                if (!loginBtn.disabled) {
+                    navigateTo('page-onboarding-mom');
+                }
+            });
+        }
+        
+        // 初始化页面
+        setupOnboardingMom();
+        
+        // 默认启动流程
+        navigateTo('page-splash');
+        setTimeout(() => {
+            navigateTo('page-login');
+        }, 3000);
+    }
+    
+    // 自动标签匹配与渲染
+    function inferTagsFromQuestion(text) {
+        const tags = new Set();
+        const keywords = {
+            '饮食健康': ['饮食','吃饭','不爱吃饭','挑食','辅食','喂养','奶粉','母乳','食欲','便秘','营养','发烧','腹泻','湿疹','疫苗','预防针'],
+            '睡眠问题': ['半夜','夜醒','哭醒','睡眠','入睡','早醒','抱睡'],
+            '日常护理': ['剪指甲','洗澡','安全','防摔','护肤','护理','卫生'],
+            '行为培养': ['分离焦虑','打人','哭闹','粘人','咬人','叛逆','规矩','行为'],
+            '知识启蒙': ['语言','说话','走路','爬','发育','智力','早教','绘本','认知','启蒙'],
+            '趣味陪伴': ['游戏','陪伴','玩耍','亲子','互动','唱儿歌','卡通']
+        };
+        for (const tag in keywords) {
+            for (const word of keywords[tag]) {
+                if (text.includes(word)) {
+                    tags.add(tag);
+                    break;
+                }
+            }
+        }
+        return Array.from(tags).slice(0,3);
+    }
+
+    function renderTagsForMomHome() {
+        const page = document.getElementById('page-mom-home');
+        if (!page) return;
+        const titles = page.querySelectorAll('.feed-card .question-title');
+        titles.forEach(h3 => {
+            let nextEl = h3.nextElementSibling;
+            while(nextEl && nextEl.classList && nextEl.classList.contains('tags')) {
+                nextEl.remove();
+                nextEl = h3.nextElementSibling;
+            }
+            
+            const tags = inferTagsFromQuestion(h3.textContent.trim());
+            if (tags.length) {
+                const tagWrap = document.createElement('div');
+                tagWrap.className = 'tags';
+                tags.forEach(t => {
+                    const span = document.createElement('span');
+                    span.className = 'tag';
+                    span.textContent = t;
+                    tagWrap.appendChild(span);
+                });
+                h3.insertAdjacentElement('afterend', tagWrap);
+            }
+        });
+    }
+
+    // 收藏存储与渲染
+    const FAVORITES_KEY = 'momFavorites';
+    function readFavorites() {
+        try { return JSON.parse(localStorage.getItem(FAVORITES_KEY) || '[]'); } catch(e) { return []; }
+    }
+    function writeFavorites(favs) {
+        try { localStorage.setItem(FAVORITES_KEY, JSON.stringify(favs)); } catch(e) {}
+    }
+    function isFavorited(ansId) {
+        return readFavorites().some(f => f.ansId === ansId);
+    }
+    function addFavorite(fav) {
+        const favs = readFavorites();
+        if (!favs.some(f => f.ansId === fav.ansId)) {
+            favs.push(fav);
+            writeFavorites(favs);
+            showToast('已收藏');
+        }
+    }
+    function removeFavorite(ansId) {
+        const favs = readFavorites().filter(x => x.ansId !== ansId);
+        writeFavorites(favs);
+        showToast('已取消收藏');
+    }
+    function handleCollect(btn, ansId, qid, title) {
+        const willActive = !btn.classList.contains('active');
+        const resolvedTitle = title || (questionsData[qid] && questionsData[qid].title) || '未知问题';
+        const tags = inferTagsFromQuestion(resolvedTitle);
+        const fav = { ansId, qid, title: resolvedTitle, tags };
+        if (willActive) {
+            addFavorite(fav);
+        } else {
+            removeFavorite(ansId);
+        }
+        btn.classList.toggle('active', willActive);
+        renderCollectionsTabs();
+        renderMomCollections();
+    }
+    function renderMomCollections() {
+        const root = document.getElementById('collectionsList');
+        if (!root) return;
+        
+        // 使用MomState中的收藏数据
+        const favs = MomState.favorites || [];
+        root.innerHTML = '';
+        
+        if (!favs.length) {
+            root.innerHTML = '<div class="empty" style="text-align: center; padding: 40px; color: #999; font-size: 16px;">暂无收藏内容<br><small style="font-size: 14px; color: #ccc;">收藏的问题和答案会显示在这里</small></div>';
+            return;
+        }
+        
+        const TAG_ORDER = ['饮食健康','睡眠问题','日常护理','行为培养','知识启蒙','趣味陪伴'];
+        const groups = {};
+        
+        favs.forEach(f => {
+            const primary = f.category || (f.tags && f.tags.length ? f.tags[0] : '其他');
+            if (!groups[primary]) groups[primary] = [];
+            groups[primary].push(f);
+        });
+        
+        const order = TAG_ORDER.concat(Object.keys(groups).filter(t => !TAG_ORDER.includes(t)));
+        order.forEach(tag => {
+            const items = groups[tag];
+            if (!items) return;
+            if (currentCollectionsFilter !== '全部' && currentCollectionsFilter !== tag) return;
+            
+            const section = document.createElement('div');
+            section.className = 'collection-section';
+            section.innerHTML = `<h3 style="margin: 15px 0 10px 0; padding: 0 15px; font-size: 16px; color: var(--text-color);">${tag}</h3>`;
+            
+            items.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'feed-card';
+                card.style.margin = '0 15px 10px 15px';
+                card.innerHTML = `
+                    <h3 class="question-title">${item.question_title || item.title || '未知问题'}</h3>
+                    <p class="answer-summary">${item.answer_content ? item.answer_content.substring(0, 100) + '...' : '暂无内容'}</p>
+                    <div class="tag" style="margin-top: 8px;">${tag}</div>
+                `;
+                card.onclick = () => showAnswerDetail(item.question_id || item.qid, item.question_title || item.title);
+                section.appendChild(card);
+            });
+            root.appendChild(section);
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', async function() {
+        try {
+            // 检查依赖是否加载
+            if (typeof MomFunctions === 'undefined') {
+                console.error('MomFunctions未定义，请检查js/mom-functions.js是否正确加载');
+                return;
+            }
+            
+            if (typeof MomAPI === 'undefined') {
+                console.error('MomAPI未定义，请检查js/mom-api.js是否正确加载');
+                return;
+            }
+            
+            // 初始化妈妈端功能
+            await MomFunctions.init();
+            
+            // 原有的初始化逻辑
+            initializeApp();
+            
+            // 渲染问题标签
+            MomFunctions.renderQuestionTags();
+            
+            // 加载初始数据
+            await MomFunctions.loadQuestions();
+            MomFunctions.renderQuestions();
+            
+            // 加载收藏列表
+            await MomFunctions.loadFavorites();
+
+            // 初始化默认的通知消息（如果没有的话）
+            const notifKey = 'nuanya:mom_notifications';
+            const existingNotifs = localStorage.getItem(notifKey);
+            if (!existingNotifs || existingNotifs === '[]' || existingNotifs === 'null') {
+                const defaultNotifications = [
+                    {
+                        id: 'notif_1',
+                        type: 'like',
+                        unread: true,
+                        question_id: 101,
+                        question_title: '宝宝不爱吃辅食怎么办？',
+                        create_time: new Date().toISOString(),
+                        message: '李奶奶点赞了你的提问'
+                    },
+                    {
+                        id: 'notif_2',
+                        type: 'answer',
+                        unread: true,
+                        question_id: 102,
+                        question_title: '宝宝频繁夜醒怎么处理？',
+                        create_time: new Date(Date.now() - 3600000).toISOString(),
+                        message: '王爷爷回答了你的问题'
+                    }
+                ];
+                localStorage.setItem(notifKey, JSON.stringify(defaultNotifications));
+            }
+
+            syncMomAnswerNotifications();
+            
+            // 延迟显示加号按钮和通知气泡
+            setTimeout(() => {
+                updateMomNotificationBadges();
+                const currentMode = localStorage.getItem('nuanya:mom_qa_mode') || 'ask';
+                if (currentMode === 'ask' && document.getElementById('page-mom-home').classList.contains('active')) {
+                    const askButton = document.getElementById('momAskButton');
+                    if (askButton) askButton.style.display = 'flex';
+                    showAskButtonHint();
+                }
+            }, 800);
+            
+            // 设置搜索功能
+            setupSearchFunction();
+            
+            console.log('妈妈端功能初始化完成');
+        } catch (error) {
+            console.error('初始化失败:', error);
+        }
+    });
+    
+    // 设置搜索功能
+    function setupSearchFunction() {
+        const searchInput = document.getElementById('searchInput');
+        if (!searchInput) return;
+        
+        let searchTimeout;
+        
+        // 监听输入事件，实现实时搜索
+        searchInput.addEventListener('input', function(e) {
+            const keyword = e.target.value.trim();
+            
+            // 清除之前的定时器
+            if (searchTimeout) {
+                clearTimeout(searchTimeout);
+            }
+            
+            // 延迟搜索，避免频繁请求
+            searchTimeout = setTimeout(async () => {
+                try {
+                    if (keyword) {
+                        console.log('搜索关键词:', keyword);
+                        const data = await MomFunctions.searchQuestions('', keyword);
+                        MomFunctions.renderQuestions();
+                        
+                        // 显示搜索结果提示
+                        if (data.questions.length === 0) {
+                            showToast('未找到相关内容');
+                        } else {
+                            showToast(`找到 ${data.questions.length} 条相关内容`);
+                        }
+                    } else {
+                        // 如果搜索框为空，加载所有问题
+                        await MomFunctions.loadQuestions();
+                        MomFunctions.renderQuestions();
+                    }
+                } catch (error) {
+                    console.error('搜索失败:', error);
+                    showToast('搜索失败，请重试');
+                }
+            }, 500); // 延迟500ms
+        });
+        
+        // 监听回车键
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const keyword = e.target.value.trim();
+                if (keyword) {
+                    // 立即执行搜索
+                    if (searchTimeout) {
+                        clearTimeout(searchTimeout);
+                    }
+                    performSearch(keyword);
+                }
+            }
+        });
+        
+        async function performSearch(keyword) {
+            try {
+                console.log('执行搜索:', keyword);
+                const data = await MomFunctions.searchQuestions('', keyword);
+                MomFunctions.renderQuestions();
+                
+                if (data.questions.length === 0) {
+                    showToast('未找到相关内容');
+                } else {
+                    showToast(`找到 ${data.questions.length} 条相关内容`);
+                }
+            } catch (error) {
+                console.error('搜索失败:', error);
+                showToast('搜索失败，请重试');
+            }
+        }
+    }
+
+    // 点赞存储
+    const LIKES_KEY = 'momLikes';
+    function readLikes() {
+        try { return JSON.parse(localStorage.getItem(LIKES_KEY) || '[]'); } catch(e) { return []; }
+    }
+    function writeLikes(list) {
+        try { localStorage.setItem(LIKES_KEY, JSON.stringify(list)); } catch(e) {}
+    }
+    function isLiked(ansId) {
+        return readLikes().includes(ansId);
+    }
+    function addLike(ansId) {
+        const likes = readLikes();
+        if (!likes.includes(ansId)) likes.push(ansId);
+        writeLikes(likes);
+    }
+    function removeLike(ansId) {
+        writeLikes(readLikes().filter(id => id !== ansId));
+    }
+    function handleLike(btn, ansId) {
+        const willActive = !btn.classList.contains('active');
+        btn.classList.toggle('active', willActive);
+        if (willActive) addLike(ansId); else removeLike(ansId);
+    }
+
+    // 显示加号按钮提示
+    function showAskButtonHint() {
+        const hint = document.getElementById('askButtonHint');
+        const hintShownKey = 'nuanya:mom_ask_button_hint_shown';
+        const qaMode = localStorage.getItem('nuanya:mom_qa_mode') || 'ask';
+        const askButton = document.getElementById('momAskButton');
+        if (!hint || !askButton || qaMode !== 'ask') return;
+        
+        // 检查加号按钮是否显示（如果不显示，不应该显示提示）
+        if (askButton.style.display === 'none') return;
+        
+        // 检查是否已经显示过提示
+        if (!localStorage.getItem(hintShownKey)) {
+            hint.style.display = 'block';
+            // 6秒后自动隐藏
+            setTimeout(() => {
+                hint.style.display = 'none';
+            }, 6000);
+            // 标记已显示过提示
+            localStorage.setItem(hintShownKey, 'true');
+        }
+    }
+
+    // 退出登录功能
+    function handleLogout() {
+        try {
+            // 清除本地存储的用户数据
+            localStorage.removeItem('momState');
+            localStorage.removeItem('momUser');
+            localStorage.removeItem('momQuestions');
+            localStorage.removeItem('momFavorites');
+            localStorage.removeItem('momBabyIssues');
+            localStorage.removeItem('momQuestionTags');
+            localStorage.removeItem('momSearchHistory');
+            
+            // 清除MomState中的用户状态
+            if (typeof MomState !== 'undefined') {
+                MomState.currentUser = null;
+                MomState.currentQuestions = [];
+                MomState.favorites = [];
+                MomState.babyIssues = [];
+                MomState.questionTags = [];
+                MomState.searchHistory = [];
+            }
+            
+            // 显示退出成功提示
+            showToast('已退出登录');
+            
+            // 延迟跳转到用户类型选择页面
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 1000);
+            
+        } catch (error) {
+            console.error('退出登录失败:', error);
+            showToast('退出登录失败，请重试');
+        }
+    }
+</script>
+
+<!-- 引入妈妈端功能模块 -->
+<script src="js/experienceAnalyzer.js"></script>
+<script src="js/mom-api.js"></script>
+<script src="js/mom-functions.js"></script>
+</div>
+</body>
+</html>
