@@ -177,7 +177,6 @@ This project touches on several active research areas:
 | Competition | Result |
 |-------------|--------|
 | 上海首届大学生AI+国际创业大赛总决赛 | Finalist (决赛路演) |
-| 华大基因『猛犸杯』国际生命科学创新大赛 | Semi-finalist (青少年科学家赛道) |
 | 深圳零一学院 X-Challenge 挑战营 | Selected Project |
 
 ## 👤 Author
